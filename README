@@ -1,1 +1,3 @@
-This file was created by JetBrains PhpStorm 3.0.2 for binding GitHub repository
+This is a simple Backbone extension library that gives alternative mechanism to navigate between application views.
+
+Conceptually it based on ViewNavigator from Apache Flex framework so the views can be pushed or popped from the stack. It is especially useful in mobile application scenarios.
