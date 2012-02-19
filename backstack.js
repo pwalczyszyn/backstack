@@ -156,6 +156,9 @@
                 if (navigationOptions.destructionPolicy)
                     this.destructionPolicy = navigationOptions.destructionPolicy;
             }
+
+            // Setting default styles
+            this.$el.css({position:'absolute', overflow:'hidden', width:'100%', height:'100%'});
         }
     });
 
@@ -169,8 +172,8 @@
             if (options && options.firstView)
                 this.pushView(options.firstView, options.firstViewOptions);
 
-            // Setting default style with overflow hidden
-            this.$el.css({overflow:'hidden'});
+            // Setting default styles
+            this.$el.css({position:'absolute', overflow:'hidden', width:'100%', height:'100%'});
         },
 
         pushView:function (viewClass, viewOptions) {
