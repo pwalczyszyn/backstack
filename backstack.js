@@ -51,28 +51,100 @@
         return arguments.callee.result = '';
     };
 
-    var StackNavigatorSlideEffect = BackStack.StackNavigatorSlideEffect = function (stackNavigator) {
+    /**
+     * Fade transition effect implementation.
+     */
+    var StackNavigatorFadeEffect = BackStack.StackNavigatorFadeEffect = function (stackNavigator, effectParams) {
         this.stackNavigator = stackNavigator;
+        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.2s linear 0.1s';
+        this.vendorPrefix = getVendorPrefix();
     };
-    StackNavigatorSlideEffect.prototype.play = function (fromView, toView, direction, callback, context) {
+    StackNavigatorFadeEffect.prototype.play = function (fromView, toView, callback, context) {
+        var activeTransitions = 0,
+            transitionEndEvent;
 
-        var vendor = getVendorPrefix(),
-            activeTransitions = 0,
-            transitionEndEvent,
-            transformParams,
-            fromViewTransitionParams = 'all 0.4s ease-out 0.1s',
-            toViewTransitionParams = 'all 0.4s ease-out 0.1s';
-
-        if (vendor == 'Moz' || vendor == '')
+        if (this.vendorPrefix == 'Moz' || this.vendorPrefix == '')
             transitionEndEvent = 'transitionend';
-        else if (vendor == 'ms')
+        else if (this.vendorPrefix == 'ms')
             transitionEndEvent = 'MSTransitionEnd';
         else
-            transitionEndEvent = vendor.toLowerCase() + 'TransitionEnd';
+            transitionEndEvent = this.vendorPrefix.toLowerCase() + 'TransitionEnd';
 
         var transitionEndHandler = function (event) {
             activeTransitions--;
-            $(event.target)[0].style[vendor + 'Transition'] = '';
+            $(event.target)[0].style[this.vendorPrefix + 'Transition'] = '';
+
+            if (activeTransitions == 0 && callback) {
+                callback.call(context);
+            }
+        };
+
+        if (fromView) {
+            fromView.one(transitionEndEvent, transitionEndHandler);
+            fromView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
+
+            activeTransitions++;
+        }
+
+        if (toView) {
+            // Setting initial opacity
+            toView.css('opacity', 0);
+            toView.one(transitionEndEvent, transitionEndHandler);
+            toView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
+
+            activeTransitions++;
+
+            this.stackNavigator.$el.append(toView);
+        }
+
+        // This is a hack to force DOM reflow before transition starts
+        this.stackNavigator.$el.css('width');
+
+        if (toView)
+            toView.css('opacity', 1);
+
+        if (fromView)
+            fromView.css('opacity', 0);
+
+        var that = this;
+        setTimeout(function () {
+            if (activeTransitions > 0) {
+                activeTransitions = 0;
+
+                if (toView)
+                    toView[0].style[that.vendorPrefix + 'Transition'] = '';
+                if (fromView)
+                    fromView[0].style[that.vendorPrefix + 'Transition'] = '';
+
+                callback.call(context);
+            }
+        }, 350);
+    };
+
+    /**
+     * Slide transition effect implementation.
+     */
+    var StackNavigatorSlideEffect = BackStack.StackNavigatorSlideEffect = function (stackNavigator, direction, effectParams) {
+        this.stackNavigator = stackNavigator;
+        this.direction = direction ? direction : 'left';
+        this.effectParams = 'all ' + (effectParams ? effectParams : '0.4s ease-out 0.1s');
+        this.vendorPrefix = getVendorPrefix();
+    };
+    StackNavigatorSlideEffect.prototype.play = function (fromView, toView, callback, context) {
+        var activeTransitions = 0,
+            transitionEndEvent,
+            transformParams;
+
+        if (this.vendorPrefix == 'Moz' || this.vendorPrefix == '')
+            transitionEndEvent = 'transitionend';
+        else if (this.vendorPrefix == 'ms')
+            transitionEndEvent = 'MSTransitionEnd';
+        else
+            transitionEndEvent = this.vendorPrefix.toLowerCase() + 'TransitionEnd';
+
+        var transitionEndHandler = function (event) {
+            activeTransitions--;
+            $(event.target)[0].style[this.vendorPrefix + 'Transition'] = '';
 
             if (activeTransitions == 0 && callback) {
                 callback.call(context);
@@ -82,59 +154,34 @@
         if (fromView) {
             fromView.one(transitionEndEvent, transitionEndHandler);
             fromView.css('left', 0);
-            fromView[0].style[vendor + 'Transition'] = fromViewTransitionParams;
+            fromView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
 
             activeTransitions++;
         }
 
         if (toView) {
             toView.one(transitionEndEvent, transitionEndHandler);
-            toView.css('left', direction == 'left' ? this.stackNavigator.width() : -this.stackNavigator.width());
-            toView[0].style[vendor + 'Transition'] = toViewTransitionParams;
-
-            this.stackNavigator.append(toView);
+            toView.css('left', this.direction == 'left' ? this.stackNavigator.$el.width() : -this.stackNavigator.$el.width());
+            toView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
+            this.stackNavigator.$el.append(toView);
 
             activeTransitions++;
         }
 
         if (fromView || toView) {
             // This is a hack to force DOM reflow before transition starts
-            this.stackNavigator.css('width');
+            this.stackNavigator.$el.css('width');
 
-            transformParams = 'translateX(' + (direction == 'left' ? -this.stackNavigator.width() : this.stackNavigator.width()) + 'px)';
+            transformParams = 'translateX(' + (this.direction == 'left' ? -this.stackNavigator.$el.width() : this.stackNavigator.$el.width()) + 'px)';
         }
 
         if (fromView && toView)
-            fromView[0].style[vendor + 'Transform'] = toView[0].style[vendor + 'Transform'] = transformParams;
+            fromView[0].style[this.vendorPrefix + 'Transform'] = toView[0].style[this.vendorPrefix + 'Transform'] = transformParams;
         else if (toView)
-            toView[0].style[vendor + 'Transform'] = transformParams;
+            toView[0].style[this.vendorPrefix + 'Transform'] = transformParams;
         else if (fromView)
-            fromView[0].style[vendor + 'Transform'] = transformParams;
+            fromView[0].style[this.vendorPrefix + 'Transform'] = transformParams;
     };
-
-    var StackNavigatorEvent = BackStack.StackNavigatorEvent =
-        function (action, oldViewClass, oldView, newViewClass, newView) {
-
-            this.action = action;
-
-            this.oldViewClass = oldViewClass;
-
-            this.oldView = oldView;
-
-            this.newViewClass = newViewClass;
-
-            this.newView = newView;
-
-            var defaultPrevented = false;
-
-            this.preventDefault = function () {
-                this.defaultPrevented = true;
-            }
-
-            this.isDefaultPrevented = function () {
-                return defaultPrevented;
-            }
-        };
 
     /**
      * Extended Backbone.View with additional properties like viewPath, destructionPolicy and a reference to parent
@@ -162,57 +209,120 @@
         }
     });
 
+    /**
+     * Private common push method.
+     *
+     * @param fromViewRef - reference to from view
+     * @param toViewRef - reference to to view
+     * @param transition - transition to played during push
+     */
+    var push = function (fromViewRef, toViewRef, transition) {
+        this.viewsStack.push(toViewRef);
+
+        transition = transition || this.defaultPushTransition;
+        transition.play(fromViewRef ? fromViewRef.instance.$el : null, toViewRef.instance.$el,
+            function () {
+
+                this.activeView = toViewRef.instance;
+                toViewRef.instance.$el.trigger('viewActivate');
+
+                if (fromViewRef) {
+                    fromViewRef.instance.$el.trigger('viewDeactivate');
+
+                    if (fromViewRef.instance.destructionPolicy == 'never') {
+                        fromViewRef.instance.$el.detach();
+                    } else {
+                        fromViewRef.instance.remove();
+                        fromViewRef.instance = null;
+                    }
+                }
+            }, this);
+    };
+
+    var pop = function (fromViewRef, toViewRef, transition) {
+        this.viewsStack.pop();
+
+        if (toViewRef && !toViewRef.instance) {
+            var viewClass = toViewRef.viewClass;
+            toViewRef.instance = new viewClass(toViewRef.options);
+            toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
+            toViewRef.instance.render();
+        }
+
+        transition = transition || this.defaultPopTransition;
+        transition.play(fromViewRef.instance.$el, toViewRef ? toViewRef.instance.$el : null,
+            function () {
+
+                if (toViewRef) {
+                    this.activeView = toViewRef.instance;
+                    toViewRef.instance.$el.trigger('viewActivate');
+                } else {
+                    this.activeView = null;
+                }
+
+                fromViewRef.instance.$el.trigger('viewDeactivate');
+                fromViewRef.instance.remove();
+                fromViewRef.instance = null;
+            }, this);
+    }
+
     BackStack.StackNavigator = Backbone.View.extend({
 
         tagName:'div',
 
         viewsStack:new Array(),
 
-        initialize:function (options) {
-            if (options && options.firstView)
-                this.pushView(options.firstView, options.firstViewOptions);
+        activeView:null,
 
-            // Setting default styles
-            this.$el.css({position:'absolute', overflow:'hidden', width:'100%', height:'100%'});
+        defaultPushTransition:(new StackNavigatorSlideEffect(this, 'left')),
+
+        defaultPopTransition:(new StackNavigatorSlideEffect(this, 'right')),
+
+        events:{
+            'viewActivate':'proxyActivationEvents',
+            'viewDeactivate':'proxyActivationEvents'
         },
 
-        pushView:function (viewClass, viewOptions) {
-            var toView, fromViewRef;
+        proxyActivationEvents:function (event) {
+            this.trigger(event.type, event);
+        },
 
-            if (this.viewsStack.length > 0)
-                fromViewRef = this.viewsStack[this.viewsStack.length - 1];
+        initialize:function (options) {
+            // Setting default styles
+            this.$el.css({overflow:'hidden'});
+        },
 
-            toView = new viewClass(viewOptions);
-            toView.setStackNavigator(this, viewOptions ? viewOptions.navigationOptions : null);
+        pushView:function (view, viewOptions, transition) {
+            var toView, toViewRef,
+                isViewInstance = (typeof view !== 'function'),
+                fromViewRef = _.last(this.viewsStack);
 
-            var event = new StackNavigatorEvent('push', fromViewRef ? fromViewRef.viewClass : null,
-                fromViewRef ? fromViewRef.instance : null, viewClass, toView);
-            this.trigger(event.action, event);
+            toView = (!isViewInstance) ? new view(viewOptions) : view;
+            toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
+            toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
+
+            var event = $.Event('viewChanging',
+                {
+                    action:'push',
+                    fromViewClass:fromViewRef ? fromViewRef.viewClass : null,
+                    fromView:fromViewRef ? fromViewRef.instance : null,
+                    toViewClass:toViewRef.viewClass,
+                    toView:toViewRef.instance
+                });
+            this.trigger(event.type, event);
 
             if (!event.isDefaultPrevented()) {
-                this.viewsStack.push({instance:toView, viewClass:viewClass, options:viewOptions});
 
-                var slideEffect = new StackNavigatorSlideEffect(this.$el);
-                slideEffect.play(fromViewRef ? fromViewRef.instance.$el : null, toView.render().$el, 'left',
-                    function () {
+                if (!isViewInstance) toView.render();
+                push.call(this, fromViewRef, toViewRef, transition);
 
-                        toView.$el.trigger('viewActivate');
-
-                        if (fromViewRef) {
-                            fromViewRef.instance.$el.trigger('viewDeactivate');
-
-                            if (fromViewRef.instance.destructionPolicy == 'never') {
-                                fromViewRef.instance.$el.detach();
-                            } else {
-                                fromViewRef.instance.$el.remove();
-                                fromViewRef.instance = null;
-                            }
-                        }
-                    }, this);
+                return toView;
             }
+
+            return null;
         },
 
-        popView:function () {
+        popView:function (transition) {
             var toViewRef, fromViewRef;
             if (this.viewsStack.length > 0)
                 fromViewRef = this.viewsStack[this.viewsStack.length - 1];
@@ -220,32 +330,61 @@
             if (this.viewsStack.length > 1)
                 toViewRef = this.viewsStack[this.viewsStack.length - 2];
 
-            var event = new StackNavigatorEvent('pop',
-                fromViewRef ? fromViewRef.viewClass : null, fromViewRef ? fromViewRef.instance : null,
-                toViewRef ? toViewRef.viewClass : null, toViewRef ? toViewRef.instance : null);
-            this.trigger(event.action, event);
+            var event = $.Event('viewChanging',
+                {
+                    action:'pop',
+                    fromViewClass:fromViewRef ? fromViewRef.viewClass : null,
+                    fromView:fromViewRef ? fromViewRef.instance : null,
+                    toViewClass:toViewRef ? toViewRef.viewClass : null,
+                    toView:toViewRef ? toViewRef.instance : null
+                });
+            this.trigger(event.type, event);
 
             if (!event.isDefaultPrevented()) {
-                this.viewsStack.pop();
 
-                if (toViewRef && !toViewRef.instance) {
-                    var viewClass = toViewRef.viewClass;
-                    toViewRef.instance = new viewClass(toViewRef.options);
-                    toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
-                    toViewRef.instance.render();
-                }
-                var slideEffect = new StackNavigatorSlideEffect(this.$el);
-                slideEffect.play(fromViewRef.instance.$el, toViewRef ? toViewRef.instance.$el : null, 'right',
-                    function () {
-                        if (toViewRef)
-                            toViewRef.instance.$el.trigger('viewActivate');
+                var fromView = fromViewRef.instance;
+                pop.call(this, fromViewRef, toViewRef, transition);
 
-                        fromViewRef.instance.$el.trigger('viewDeactivate');
-                        fromViewRef.instance.$el.remove();
-                        fromViewRef.instance = null;
-                    }, this);
+                return fromView;
             }
+
+            return null;
+        },
+
+        replaceView:function (view, viewOptions, transition) {
+            if (this.viewsStack.length > 0) {
+
+                var toView, toViewRef,
+                    isViewInstance = (typeof view !== 'function'),
+                    fromViewRef = this.viewsStack[this.viewsStack.length - 1];
+
+                toView = (!isViewInstance) ? new view(viewOptions) : view;
+                toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
+                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
+
+                var event = $.Event('viewChanging',
+                    {
+                        action:'replace',
+                        fromViewClass:fromViewRef.viewClass,
+                        fromView:fromViewRef.instance,
+                        toViewClass:toViewRef.viewClass,
+                        toView:toViewRef.instance
+                    });
+                this.trigger(event.type, event);
+
+                if (!event.isDefaultPrevented()) {
+
+                    this.viewsStack.pop();
+
+                    if (!isViewInstance) toView.render();
+                    push.call(this, fromViewRef, toViewRef, transition);
+
+                    return toView;
+                }
+            }
+            return null;
         }
+
     });
 
     return BackStack;
