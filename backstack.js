@@ -94,8 +94,7 @@
 
             activeTransitions++;
 
-            // Showing the view
-            toView.css('display', 'inherit');
+            this.stackNavigator.$el.append(toView);
         }
 
         // This is a hack to force DOM reflow before transition starts
@@ -164,11 +163,9 @@
             toView.one(transitionEndEvent, transitionEndHandler);
             toView.css('left', this.direction == 'left' ? this.stackNavigator.$el.width() : -this.stackNavigator.$el.width());
             toView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
+            this.stackNavigator.$el.append(toView);
 
             activeTransitions++;
-
-            // Showing the view
-            toView.css('display', 'inherit');
         }
 
         if (fromView || toView) {
@@ -192,20 +189,12 @@
      */
     var View = BackStack.StackView = Backbone.View.extend({
 
-        /**
-         * Posible options auto or never
-         */
+        viewPath:undefined,
+
+        // Posible options auto or never
         destructionPolicy:"auto",
 
-        /**
-         * Reference to parent StackNavigator
-         */
         stackNavigator:undefined,
-
-        /**
-         *
-         */
-        rendered:false,
 
         setStackNavigator:function (stackNavigator, navigationOptions) {
             this.stackNavigator = stackNavigator;
@@ -228,20 +217,9 @@
      * @param transition - transition to played during push
      */
     var push = function (fromViewRef, toViewRef, transition) {
-
-        // Hiding view
-        toViewRef.instance.$el.css('display', 'none');
-        // Adding view to the DOM
-        this.$el.append(toViewRef.instance.$el);
-        // Rendering view if required
-        if (!toViewRef.instance.rendered) {
-            toViewRef.instance.render();
-            toViewRef.instance.rendered = true;
-        }
-        // Adding view to the stack internal array
         this.viewsStack.push(toViewRef);
 
-        transition = transition || this.defaultPushTransition || (this.defaultPushTransition = new StackNavigatorSlideEffect(this, 'left'));
+        transition = transition || this.defaultPushTransition;
         transition.play(fromViewRef ? fromViewRef.instance.$el : null, toViewRef.instance.$el,
             function () {
 
@@ -262,34 +240,16 @@
     };
 
     var pop = function (fromViewRef, toViewRef, transition) {
-
-        // Removing top view ref from the stack array
         this.viewsStack.pop();
 
-        if (toViewRef) {
-
-            if (!toViewRef.instance) {
-                // Getting view class declaration
-                var viewClass = toViewRef.viewClass;
-                // Creating view instance
-                toViewRef.instance = new viewClass(toViewRef.options);
-                // Setting ref to StackNavigator
-                toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
-            }
-
-            // Hiding view
-            toViewRef.instance.$el.css('display', 'none');
-            // Adding view to the DOM
-            this.$el.append(toViewRef.instance.$el);
-            // Rendering view if required
-            if (!toViewRef.instance.rendered) {
-                toViewRef.instance.render();
-                toViewRef.instance.rendered = true;
-            }
-
+        if (toViewRef && !toViewRef.instance) {
+            var viewClass = toViewRef.viewClass;
+            toViewRef.instance = new viewClass(toViewRef.options);
+            toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
+            toViewRef.instance.render();
         }
 
-        transition = transition || this.defaultPopTransition || (this.defaultPopTransition = new StackNavigatorSlideEffect(this, 'right'));
+        transition = transition || this.defaultPopTransition;
         transition.play(fromViewRef.instance.$el, toViewRef ? toViewRef.instance.$el : null,
             function () {
 
@@ -304,15 +264,8 @@
                 fromViewRef.instance.remove();
                 fromViewRef.instance = null;
             }, this);
-    };
+    }
 
-    /**
-     * StackNavigator manages navigation between application views. It provides functions like pushView, popView,
-     * replaceView.
-     *
-     * When view gets on top of the stack it triggers viewActivate event, when its popped or overlayed with other
-     * view it triggers viewDeactivate events.
-     */
     BackStack.StackNavigator = Backbone.View.extend({
 
         tagName:'div',
@@ -321,9 +274,9 @@
 
         activeView:null,
 
-        defaultPushTransition:null,
+        defaultPushTransition:(new StackNavigatorSlideEffect(this, 'left')),
 
-        defaultPopTransition:null,
+        defaultPopTransition:(new StackNavigatorSlideEffect(this, 'right')),
 
         events:{
             'viewActivate':'proxyActivationEvents',
@@ -360,6 +313,7 @@
 
             if (!event.isDefaultPrevented()) {
 
+                if (!isViewInstance) toView.render();
                 push.call(this, fromViewRef, toViewRef, transition);
 
                 return toView;
@@ -421,6 +375,8 @@
                 if (!event.isDefaultPrevented()) {
 
                     this.viewsStack.pop();
+
+                    if (!isViewInstance) toView.render();
                     push.call(this, fromViewRef, toViewRef, transition);
 
                     return toView;
