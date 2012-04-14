@@ -52,6 +52,22 @@
     };
 
     /**
+     * No transition effect implementation.
+     */
+    var StackNavigatorNoEffect = BackStack.StackNavigatorNoEffect = function (stackNavigator) {
+        this.stackNavigator = stackNavigator;
+    };
+
+    StackNavigatorNoEffect.prototype.play = function (fromView, toView, callback, context) {
+        if (toView) {
+            // Showing the view
+            toView.css('display', toView.data('original-display'));
+            toView.removeData('original-display');
+        }
+        callback.call(context);
+    };
+
+    /**
      * Fade transition effect implementation.
      */
     var StackNavigatorFadeEffect = BackStack.StackNavigatorFadeEffect = function (stackNavigator, effectParams) {
@@ -94,7 +110,9 @@
 
             activeTransitions++;
 
-            this.stackNavigator.$el.append(toView);
+            // Showing the view
+            toView.css('display', toView.data('original-display'));
+            toView.removeData('original-display');
         }
 
         // This is a hack to force DOM reflow before transition starts
@@ -163,9 +181,12 @@
             toView.one(transitionEndEvent, transitionEndHandler);
             toView.css('left', this.direction == 'left' ? this.stackNavigator.$el.width() : -this.stackNavigator.$el.width());
             toView[0].style[this.vendorPrefix + 'Transition'] = this.effectParams;
-            this.stackNavigator.$el.append(toView);
 
             activeTransitions++;
+
+            // Showing the view
+            toView.css('display', toView.data('original-display'));
+            toView.removeData('original-display');
         }
 
         if (fromView || toView) {
@@ -189,12 +210,20 @@
      */
     var View = BackStack.StackView = Backbone.View.extend({
 
-        viewPath:undefined,
-
-        // Posible options auto or never
+        /**
+         * Posible options auto or never
+         */
         destructionPolicy:"auto",
 
+        /**
+         * Reference to parent StackNavigator
+         */
         stackNavigator:undefined,
+
+        /**
+         *
+         */
+        rendered:false,
 
         setStackNavigator:function (stackNavigator, navigationOptions) {
             this.stackNavigator = stackNavigator;
@@ -217,9 +246,21 @@
      * @param transition - transition to played during push
      */
     var push = function (fromViewRef, toViewRef, transition) {
+
+        // Hiding view
+        toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
+        toViewRef.instance.$el.css('display', 'none');
+        // Adding view to the DOM
+        this.$el.append(toViewRef.instance.$el);
+        // Rendering view if required
+        if (!toViewRef.instance.rendered) {
+            toViewRef.instance.render.call(toViewRef.instance);
+            toViewRef.instance.rendered = true;
+        }
+        // Adding view to the stack internal array
         this.viewsStack.push(toViewRef);
 
-        transition = transition || this.defaultPushTransition;
+        transition = transition || this.defaultPushTransition || (this.defaultPushTransition = new StackNavigatorSlideEffect(this, 'left'));
         transition.play(fromViewRef ? fromViewRef.instance.$el : null, toViewRef.instance.$el,
             function () {
 
@@ -236,20 +277,42 @@
                         fromViewRef.instance = null;
                     }
                 }
+
+                this.trigger('viewChanged');
             }, this);
     };
 
     var pop = function (fromViewRef, toViewRef, transition) {
+
+        // Removing top view ref from the stack array
         this.viewsStack.pop();
 
-        if (toViewRef && !toViewRef.instance) {
-            var viewClass = toViewRef.viewClass;
-            toViewRef.instance = new viewClass(toViewRef.options);
-            toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
-            toViewRef.instance.render();
+        if (toViewRef) {
+
+            if (!toViewRef.instance) {
+                // Getting view class declaration
+                var viewClass = toViewRef.viewClass;
+                // Creating view instance
+                toViewRef.instance = new viewClass(toViewRef.options);
+                // Setting ref to StackNavigator
+                toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
+            }
+
+            // Hiding view
+            toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
+            toViewRef.instance.$el.css('display', 'none');
+
+            // Adding view to the DOM
+            this.$el.append(toViewRef.instance.$el);
+            // Rendering view if required
+            if (!toViewRef.instance.rendered) {
+                toViewRef.instance.render.call(toViewRef.instance);
+                toViewRef.instance.rendered = true;
+            }
+
         }
 
-        transition = transition || this.defaultPopTransition;
+        transition = transition || this.defaultPopTransition || (this.defaultPopTransition = new StackNavigatorSlideEffect(this, 'right'));
         transition.play(fromViewRef.instance.$el, toViewRef ? toViewRef.instance.$el : null,
             function () {
 
@@ -263,20 +326,20 @@
                 fromViewRef.instance.$el.trigger('viewDeactivate');
                 fromViewRef.instance.remove();
                 fromViewRef.instance = null;
+
+                this.trigger('viewChanged');
             }, this);
     }
 
     BackStack.StackNavigator = Backbone.View.extend({
 
-        tagName:'div',
-
-        viewsStack:new Array(),
+        viewsStack:null,
 
         activeView:null,
 
-        defaultPushTransition:(new StackNavigatorSlideEffect(this, 'left')),
+        defaultPushTransition:null,
 
-        defaultPopTransition:(new StackNavigatorSlideEffect(this, 'right')),
+        defaultPopTransition:null,
 
         events:{
             'viewActivate':'proxyActivationEvents',
@@ -290,6 +353,9 @@
         initialize:function (options) {
             // Setting default styles
             this.$el.css({overflow:'hidden'});
+
+            // Setting new viewsStack array
+            this.viewsStack = [];
         },
 
         pushView:function (view, viewOptions, transition) {
@@ -313,7 +379,6 @@
 
             if (!event.isDefaultPrevented()) {
 
-                if (!isViewInstance) toView.render();
                 push.call(this, fromViewRef, toViewRef, transition);
 
                 return toView;
@@ -351,6 +416,32 @@
             return null;
         },
 
+        popAll:function (transition) {
+            if (this.viewsStack.length > 0) {
+
+                var fromViewRef;
+                if (this.viewsStack.length > 0)
+                    fromViewRef = this.viewsStack[this.viewsStack.length - 1];
+
+                var event = $.Event('viewChanging',
+                    {
+                        action:'popAll',
+                        fromViewClass:fromViewRef ? fromViewRef.viewClass : null,
+                        fromView:fromViewRef ? fromViewRef.instance : null,
+                        toViewClass:null,
+                        toView:null
+                    });
+                this.trigger(event.type, event);
+
+                if (!event.isDefaultPrevented()) {
+                    // Removing views except the top one
+                    this.viewsStack.splice(0, this.viewsStack.length - 1);
+                    pop.call(this, fromViewRef, null, transition);
+                }
+            }
+            return null;
+        },
+
         replaceView:function (view, viewOptions, transition) {
             if (this.viewsStack.length > 0) {
 
@@ -375,8 +466,6 @@
                 if (!event.isDefaultPrevented()) {
 
                     this.viewsStack.pop();
-
-                    if (!isViewInstance) toView.render();
                     push.call(this, fromViewRef, toViewRef, transition);
 
                     return toView;
@@ -384,7 +473,6 @@
             }
             return null;
         }
-
     });
 
     return BackStack;
