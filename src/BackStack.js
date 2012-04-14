@@ -22,6 +22,5 @@ define(['StackNavigator', 'StackView', 'effects/NoEffect', 'effects/SlideEffect'
 
 require(['BackStack'], function (BackStack) {
     window.BackStack = BackStack;
-    console.log('BackStack initialized!');
     $(document).trigger('BackStackLoaded');
 });
