@@ -1,3 +1,23 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	Copyright 2012 Piotr Walczyszyn (http://outof.me | @pwalczyszyn)
+//
+//	Licensed under the Apache License, Version 2.0 (the "License");
+//	you may not use this file except in compliance with the License.
+//	You may obtain a copy of the License at
+//
+//		http://www.apache.org/licenses/LICENSE-2.0
+//
+//	Unless required by applicable law or agreed to in writing, software
+//	distributed under the License is distributed on an "AS IS" BASIS,
+//	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//	See the License for the specific language governing permissions and
+//	limitations under the License.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+
+// BackStak version 0.9.0
+
 (function (root, factory) {
     // Set up BackStack appropriately for the environment.
     if (typeof exports !== 'undefined') {
@@ -297,14 +317,6 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 12:48 PM
- */
-
 define('StackView',[],function () {
 
     var StackView = Backbone.View.extend({
@@ -340,14 +352,6 @@ define('StackView',[],function () {
 
     return StackView;
 });
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:56 PM
- */
-
 define('effects/NoEffect',[],function () {
 
     var NoEffect = function (stackNavigator) {
@@ -365,14 +369,6 @@ define('effects/NoEffect',[],function () {
 
     return NoEffect;
 });
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:48 PM
- */
-
 define('effects/vendorPrefix',[], function () {
 
     /**
@@ -402,20 +398,12 @@ define('effects/vendorPrefix',[], function () {
 
     return (vendorPrefix || '');
 });
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:38 PM
- */
-
 define('effects/SlideEffect',['effects/vendorPrefix'], function (vendorPrefix) {
 
     var SlideEffect = function SlideEffect(stackNavigator, direction, effectParams) {
         this.stackNavigator = stackNavigator;
         this.direction = direction ? direction : 'left';
-        this.effectParams = 'all ' + (effectParams ? effectParams : '0.4s ease-out 0.1s');
+        this.effectParams = 'all ' + (effectParams ? effectParams : '0.4s ease-out');
     };
 
     SlideEffect.prototype.play = function (fromView, toView, callback, context) {
@@ -472,18 +460,30 @@ define('effects/SlideEffect',['effects/vendorPrefix'], function (vendorPrefix) {
             toView[0].style[vendorPrefix + 'Transform'] = transformParams;
         else if (fromView)
             fromView[0].style[vendorPrefix + 'Transform'] = transformParams;
+
+        // This is a fallback for situations when TransitionEnd event doesn't get triggered
+        var that = this;
+        setTimeout(function () {
+            if (activeTransitions > 0) {
+                activeTransitions = -1;
+
+                if (toView) {
+                    fromView.off(transitionEndEvent, transitionEndHandler);
+                    toView[0].style[vendorPrefix + 'Transition'] = '';
+                }
+
+                if (fromView) {
+                    toView.off(transitionEndEvent, transitionEndHandler);
+                    fromView[0].style[vendorPrefix + 'Transition'] = '';
+                }
+
+                callback.call(context);
+            }
+        }, 600);
     };
 
     return SlideEffect;
 });
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 12:48 PM
- */
-
 define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
 
     /**
@@ -734,19 +734,11 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
 
     return StackNavigator;
 });
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:56 PM
- */
-
 define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
 
     var FadeEffect = function (stackNavigator, effectParams) {
         this.stackNavigator = stackNavigator;
-        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.3s ease-in-out';
+        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.4s ease-in-out';
     };
 
     FadeEffect.prototype.play = function (fromView, toView, callback, context) {
@@ -770,19 +762,19 @@ define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
         };
 
         if (fromView) {
+            activeTransitions++;
+
             fromView.one(transitionEndEvent, transitionEndHandler);
             fromView[0].style[vendorPrefix + 'Transition'] = this.effectParams;
-
-            activeTransitions++;
         }
 
         if (toView) {
+            activeTransitions++;
+
             // Setting initial opacity
             toView.css('opacity', 0);
             toView.one(transitionEndEvent, transitionEndHandler);
             toView[0].style[vendorPrefix + 'Transition'] = this.effectParams;
-
-            activeTransitions++;
 
             // Showing the view
             toView.css('display', toView.data('original-display'));
@@ -798,34 +790,34 @@ define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
         if (fromView)
             fromView.css('opacity', 0);
 
+        // This is a fallback for situations when TransitionEnd event doesn't get triggered
         var that = this;
         setTimeout(function () {
             if (activeTransitions > 0) {
                 activeTransitions = -1;
 
+                console.log('Warning ' + transitionEndEvent + ' didn\'t trigger in expected time!');
+
                 if (toView) {
                     fromView.off(transitionEndEvent, transitionEndHandler);
-                    toView[0].style[that.vendorPrefix + 'Transition'] = '';
+                    toView[0].style[vendorPrefix + 'Transition'] = '';
                 }
 
                 if (fromView) {
                     toView.off(transitionEndEvent, transitionEndHandler);
-                    fromView[0].style[that.vendorPrefix + 'Transition'] = '';
+                    fromView[0].style[vendorPrefix + 'Transition'] = '';
                 }
 
                 callback.call(context);
             }
-        }, 350);
+        }, 600);
     };
 
     return FadeEffect;
 });
 /**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
+ * This is a license comment it should be removed from the built file
  *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:11 PM
  */
 
 define('BackStack',['StackNavigator', 'StackView', 'effects/NoEffect', 'effects/SlideEffect', 'effects/FadeEffect'],
@@ -839,7 +831,5 @@ define('BackStack',['StackNavigator', 'StackView', 'effects/NoEffect', 'effects/
 
         return BackStack;
     });
-
-
     return BackStack;
 }));

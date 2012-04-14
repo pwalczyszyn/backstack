@@ -4,6 +4,7 @@
         "almond":"../build/almond-0.0.3"
     },
     include:["almond", "BackStack"],
+    preserveLicenseComments:true,
     out:"backstack-built.js",
     wrap:{
         startFile:"wrap-start.frag",

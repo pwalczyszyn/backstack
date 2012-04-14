@@ -1,11 +1,3 @@
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 12:48 PM
- */
-
 define(['effects/SlideEffect'], function (SlideEffect) {
 
     /**

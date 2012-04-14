@@ -1,11 +1,3 @@
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 4/14/12
- * Time: 2:56 PM
- */
-
 define(['effects/vendorPrefix'], function (vendorPrefix) {
 
     var FadeEffect = function (stackNavigator, effectParams) {
