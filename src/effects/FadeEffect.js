@@ -10,7 +10,7 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
 
     var FadeEffect = function (stackNavigator, effectParams) {
         this.stackNavigator = stackNavigator;
-        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.2s linear 0.1s';
+        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.4s ease-in-out';
     };
 
     FadeEffect.prototype.play = function (fromView, toView, callback, context) {
@@ -34,19 +34,19 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
         };
 
         if (fromView) {
+            activeTransitions++;
+
             fromView.one(transitionEndEvent, transitionEndHandler);
             fromView[0].style[vendorPrefix + 'Transition'] = this.effectParams;
-
-            activeTransitions++;
         }
 
         if (toView) {
+            activeTransitions++;
+
             // Setting initial opacity
             toView.css('opacity', 0);
             toView.one(transitionEndEvent, transitionEndHandler);
             toView[0].style[vendorPrefix + 'Transition'] = this.effectParams;
-
-            activeTransitions++;
 
             // Showing the view
             toView.css('display', toView.data('original-display'));
@@ -62,19 +62,27 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
         if (fromView)
             fromView.css('opacity', 0);
 
+        // This is a fallback for situations when TransitionEnd event doesn't get triggered
         var that = this;
         setTimeout(function () {
             if (activeTransitions > 0) {
-                activeTransitions = 0;
+                activeTransitions = -1;
 
-                if (toView)
-                    toView[0].style[that.vendorPrefix + 'Transition'] = '';
-                if (fromView)
-                    fromView[0].style[that.vendorPrefix + 'Transition'] = '';
+                console.log('Warning ' + transitionEndEvent + ' didn\'t trigger in expected time!');
+
+                if (toView) {
+                    fromView.off(transitionEndEvent, transitionEndHandler);
+                    toView[0].style[vendorPrefix + 'Transition'] = '';
+                }
+
+                if (fromView) {
+                    toView.off(transitionEndEvent, transitionEndHandler);
+                    fromView[0].style[vendorPrefix + 'Transition'] = '';
+                }
 
                 callback.call(context);
             }
-        }, 350);
+        }, 600);
     };
 
     return FadeEffect;

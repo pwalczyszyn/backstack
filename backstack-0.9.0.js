@@ -746,7 +746,7 @@ define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
 
     var FadeEffect = function (stackNavigator, effectParams) {
         this.stackNavigator = stackNavigator;
-        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.2s linear 0.1s';
+        this.effectParams = 'opacity ' + (effectParams) ? effectParams : '0.3s ease-in-out';
     };
 
     FadeEffect.prototype.play = function (fromView, toView, callback, context) {
@@ -801,12 +801,17 @@ define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
         var that = this;
         setTimeout(function () {
             if (activeTransitions > 0) {
-                activeTransitions = 0;
+                activeTransitions = -1;
 
-                if (toView)
+                if (toView) {
+                    fromView.off(transitionEndEvent, transitionEndHandler);
                     toView[0].style[that.vendorPrefix + 'Transition'] = '';
-                if (fromView)
+                }
+
+                if (fromView) {
+                    toView.off(transitionEndEvent, transitionEndHandler);
                     fromView[0].style[that.vendorPrefix + 'Transition'] = '';
+                }
 
                 callback.call(context);
             }

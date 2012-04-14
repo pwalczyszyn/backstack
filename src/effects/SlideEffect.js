@@ -11,7 +11,7 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
     var SlideEffect = function SlideEffect(stackNavigator, direction, effectParams) {
         this.stackNavigator = stackNavigator;
         this.direction = direction ? direction : 'left';
-        this.effectParams = 'all ' + (effectParams ? effectParams : '0.4s ease-out 0.1s');
+        this.effectParams = 'all ' + (effectParams ? effectParams : '0.4s ease-out');
     };
 
     SlideEffect.prototype.play = function (fromView, toView, callback, context) {
@@ -68,6 +68,26 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
             toView[0].style[vendorPrefix + 'Transform'] = transformParams;
         else if (fromView)
             fromView[0].style[vendorPrefix + 'Transform'] = transformParams;
+
+        // This is a fallback for situations when TransitionEnd event doesn't get triggered
+        var that = this;
+        setTimeout(function () {
+            if (activeTransitions > 0) {
+                activeTransitions = -1;
+
+                if (toView) {
+                    fromView.off(transitionEndEvent, transitionEndHandler);
+                    toView[0].style[vendorPrefix + 'Transition'] = '';
+                }
+
+                if (fromView) {
+                    toView.off(transitionEndEvent, transitionEndHandler);
+                    fromView[0].style[vendorPrefix + 'Transition'] = '';
+                }
+
+                callback.call(context);
+            }
+        }, 600);
     };
 
     return SlideEffect;
