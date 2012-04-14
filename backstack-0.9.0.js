@@ -805,22 +805,19 @@ define('effects/FadeEffect',['effects/vendorPrefix'], function (vendorPrefix) {
  * Time: 2:11 PM
  */
 
+window.BackStack = {};
+
 define('BackStack',['StackNavigator', 'StackView', 'effects/NoEffect', 'effects/SlideEffect', 'effects/FadeEffect'],
     function (StackNavigator, StackView, NoEffect, SlideEffect, FadeEffect) {
 
-        var BackStack = {
-            StackNavigator:StackNavigator,
-            StackView:StackView,
-            NoEffect:NoEffect,
-            SlideEffect:SlideEffect,
-            FadeEffect:FadeEffect
-        };
+        var BackStack = window.BackStack;
+        BackStack.StackNavigator = StackNavigator;
+        BackStack.StackView = StackView;
+        BackStack.NoEffect = NoEffect;
+        BackStack.SlideEffect = SlideEffect;
+        BackStack.FadeEffect = FadeEffect;
 
         return BackStack;
     });
 
-require(['BackStack'], function (BackStack) {
-    window.BackStack = BackStack;
-    $(document).trigger('BackStackLoaded');
-});
 }());
