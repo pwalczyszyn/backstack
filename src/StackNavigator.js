@@ -108,7 +108,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
 
                 this.trigger('viewChanged');
             }, this);
-    }
+    };
 
     var StackNavigator = Backbone.View.extend({
 
