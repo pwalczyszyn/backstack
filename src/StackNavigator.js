@@ -24,7 +24,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
         // Adding view to the stack internal array
         this.viewsStack.push(toViewRef);
 
-        transition = transition || this.defaultPushTransition || (this.defaultPushTransition = new SlideEffect(this, 'left'));
+        transition = transition || this.defaultPushTransition || (this.defaultPushTransition = new SlideEffect({direction:'left'}));
         transition.play(fromViewRef ? fromViewRef.instance.$el : null, toViewRef.instance.$el,
             function () {
 
@@ -83,7 +83,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
 
         }
 
-        transition = transition || this.defaultPopTransition || (this.defaultPopTransition = new SlideEffect(this, 'right'));
+        transition = transition || this.defaultPopTransition || (this.defaultPopTransition = new SlideEffect({direction:'right'}));
         transition.play(fromViewRef.instance.$el, toViewRef ? toViewRef.instance.$el : null,
             function () {
 
