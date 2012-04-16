@@ -14,11 +14,20 @@ define(['effects/Effect'], function (Effect) {
         var that = this,
             activeTransitions = 0,
             transformParams,
-            timeout;
+            timeout,
+            transformProp = that.vendorPrefix == '' ? 'transform'
+                : ['-' + that.vendorPrefix.toLowerCase(), '-', 'transform'].join(''),
+            transitionProp = that.vendorPrefix == '' ? 'transition'
+                : ['-' + that.vendorPrefix.toLowerCase(), '-', 'transition'].join('');
 
         var transitionEndHandler = function (event) {
             activeTransitions--;
-            $(event.target)[0].style[that.vendorPrefix + 'Transition'] = '';
+            event.target.style[transitionProp] = '';
+            event.target.style[transformProp] = '';
+
+            if ($toView && $toView[0] == event.target) {
+                $toView.css('left', 0);
+            }
 
             if (activeTransitions == 0 && callback) {
                 callback.call(context);
@@ -30,10 +39,10 @@ define(['effects/Effect'], function (Effect) {
 
             $fromView.one(that.transitionEndEvent, transitionEndHandler);
             $fromView.css('left', 0);
-            $fromView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
+            $fromView.css(transitionProp, [transformProp, ' ',
                 that.fromViewTransitionProps.duration, 's ',
                 that.fromViewTransitionProps.easing, ' ',
-                that.fromViewTransitionProps.delay, 's'].join('');
+                that.fromViewTransitionProps.delay, 's'].join(''));
         }
 
         if ($toView) {
@@ -41,10 +50,10 @@ define(['effects/Effect'], function (Effect) {
 
             $toView.one(that.transitionEndEvent, transitionEndHandler);
             $toView.css('left', that.direction == 'left' ? context.$el.width() : -context.$el.width());
-            $toView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
+            $toView.css(transitionProp, [transformProp, ' ',
                 that.toViewTransitionProps.duration, 's ',
                 that.toViewTransitionProps.easing, ' ',
-                that.toViewTransitionProps.delay, 's'].join('');
+                that.toViewTransitionProps.delay, 's'].join(''));
 
             // Showing the view
             $toView.css('display', $toView.data('original-display'));
@@ -68,12 +77,15 @@ define(['effects/Effect'], function (Effect) {
 
                 if ($toView) {
                     $toView.off(that.transitionEndEvent, transitionEndHandler);
-                    $toView[0].style[that.vendorPrefix + 'Transition'] = '';
+                    $toView.css(transitionProp, '');
+                    $toView.css(transformProp, '');
+                    $toView.css('left', 0);
                 }
 
                 if ($fromView) {
                     $fromView.off(that.transitionEndEvent, transitionEndHandler);
-                    $fromView[0].style[that.vendorPrefix + 'Transition'] = '';
+                    $fromView.css(transitionProp, '');
+                    $fromView.css(transformProp, '');
                 }
 
                 callback.call(context);
@@ -81,11 +93,11 @@ define(['effects/Effect'], function (Effect) {
         }, transDuration * 1.5 * 1000);
 
         if ($fromView && $toView)
-            $fromView[0].style[that.vendorPrefix + 'Transform'] = $toView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
+            $fromView[0].style[transformProp] = $toView[0].style[transformProp] = transformParams;
         else if ($toView)
-            $toView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
+            $toView[0].style[transformProp] = transformParams;
         else if ($fromView)
-            $fromView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
+            $fromView[0].style[transformProp] = transformParams;
     };
 
     return SlideEffect;
