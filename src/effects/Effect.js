@@ -2,10 +2,7 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
 
     var Effect = function Effect(params) {
 
-        if (this.params)
-            this.params = _.extend(this.params, params);
-        else
-            this.params = params;
+        if (params) _.extend(this, params);
 
         this.vendorPrefix = vendorPrefix;
 

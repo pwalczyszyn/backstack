@@ -2,11 +2,11 @@ define(['effects/Effect'], function (Effect) {
 
     var SlideEffect = Effect.extend({
 
-        params:{
-            direction:'left',
-            fromViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0},
-            toViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0}
-        }
+        direction:'left',
+
+        fromViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0},
+
+        toViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0}
 
     });
 
@@ -31,20 +31,20 @@ define(['effects/Effect'], function (Effect) {
             $fromView.one(that.transitionEndEvent, transitionEndHandler);
             $fromView.css('left', 0);
             $fromView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
-                that.params.fromViewTransitionProps.duration, 's ',
-                that.params.fromViewTransitionProps.easing, ' ',
-                that.params.fromViewTransitionProps.delay, 's'].join('');
+                that.fromViewTransitionProps.duration, 's ',
+                that.fromViewTransitionProps.easing, ' ',
+                that.fromViewTransitionProps.delay, 's'].join('');
         }
 
         if ($toView) {
             activeTransitions++;
 
             $toView.one(that.transitionEndEvent, transitionEndHandler);
-            $toView.css('left', that.params.direction == 'left' ? context.$el.width() : -context.$el.width());
+            $toView.css('left', that.direction == 'left' ? context.$el.width() : -context.$el.width());
             $toView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
-                that.params.toViewTransitionProps.duration, 's ',
-                that.params.toViewTransitionProps.easing, ' ',
-                that.params.toViewTransitionProps.delay, 's'].join('');
+                that.toViewTransitionProps.duration, 's ',
+                that.toViewTransitionProps.easing, ' ',
+                that.toViewTransitionProps.delay, 's'].join('');
 
             // Showing the view
             $toView.css('display', $toView.data('original-display'));
@@ -54,12 +54,12 @@ define(['effects/Effect'], function (Effect) {
         if ($fromView || $toView) {
             // This is a hack to force DOM reflow before transition starts
             context.$el.css('width');
-            transformParams = 'translateX(' + (that.params.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
+            transformParams = 'translateX(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
         }
 
         // This is a fallback for situations when TransitionEnd event doesn't get triggered
-        var transDuration = Math.max(that.params.fromViewTransitionProps.duration, that.params.toViewTransitionProps.duration) +
-            Math.max(that.params.fromViewTransitionProps.delay, that.params.toViewTransitionProps.delay);
+        var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
+            Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
         timeout = setTimeout(function () {
             if (activeTransitions > 0) {
                 activeTransitions = -1;
