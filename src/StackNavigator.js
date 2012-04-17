@@ -243,6 +243,38 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 }
             }
             return null;
+        },
+
+        replaceAll:function (view, viewOptions, transition) {
+            if (this.viewsStack.length > 0) {
+
+                var toView, toViewRef,
+                    isViewInstance = (typeof view !== 'function'),
+                    fromViewRef = this.viewsStack[this.viewsStack.length - 1];
+
+                toView = (!isViewInstance) ? new view(viewOptions) : view;
+                toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
+                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
+
+                var event = $.Event('viewChanging',
+                    {
+                        action:'replaceAll',
+                        fromViewClass:fromViewRef.viewClass,
+                        fromView:fromViewRef.instance,
+                        toViewClass:toViewRef.viewClass,
+                        toView:toViewRef.instance
+                    });
+                this.trigger(event.type, event);
+
+                if (!event.isDefaultPrevented()) {
+
+                    this.viewsStack.splice(0, this.viewsStack.length);
+                    push.call(this, fromViewRef, toViewRef, transition);
+
+                    return toView;
+                }
+            }
+            return null;
         }
     });
 
