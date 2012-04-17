@@ -14,7 +14,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
         toViewRef.instance.$el.css('display', 'none');
 
         // Adding view to the DOM
-        this.$el.append(toViewRef.instance.$el);
+        this.$el.append(toViewRef.instance.el);
 
         // Rendering view if required
         if (!toViewRef.instance.rendered) {
