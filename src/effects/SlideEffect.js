@@ -73,28 +73,28 @@ define(['effects/Effect'], function (Effect) {
             var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
                 Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
 
-//            timeout = setTimeout(function () {
-//                if (activeTransitions > 0) {
-//                    activeTransitions = -1;
-//
-//                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
-//
-//                    if ($toView) {
-//                        $toView.off(that.transitionEndEvent, transitionEndHandler);
-//                        $toView.css(transitionProp, '');
-//                        $toView.css(transformProp, '');
-//                        $toView.css('left', 0);
-//                    }
-//
-//                    if ($fromView) {
-//                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
-//                        $fromView.css(transitionProp, '');
-//                        $fromView.css(transformProp, '');
-//                    }
-//
-//                    callback.call(context);
-//                }
-//            }, transDuration * 1.5 * 1000);
+            timeout = setTimeout(function () {
+                if (activeTransitions > 0) {
+                    activeTransitions = -1;
+
+                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+
+                    if ($toView) {
+                        $toView.off(that.transitionEndEvent, transitionEndHandler);
+                        $toView.css(transitionProp, '');
+                        $toView.css(transformProp, '');
+                        $toView.css('left', 0);
+                    }
+
+                    if ($fromView) {
+                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
+                        $fromView.css(transitionProp, '');
+                        $fromView.css(transformProp, '');
+                    }
+
+                    callback.call(context);
+                }
+            }, transDuration * 1.5 * 1000);
 
             if ($fromView && $toView)
                 $fromView[0].style[transformProp] = $toView[0].style[transformProp] = transformParams;
