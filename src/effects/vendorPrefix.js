@@ -25,5 +25,5 @@ define([], function () {
         }
     }
 
-    return (vendorPrefix || '');
+    return (vendorPrefix.toLowerCase() || '');
 });

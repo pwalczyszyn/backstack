@@ -16,7 +16,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-// BackStak version 0.9.0
+// BackStak version 0.9.9
 
 (function (root, factory) {
     // Set up BackStack appropriately for the environment.
@@ -317,41 +317,6 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-define('StackView',[],function () {
-
-    var StackView = Backbone.View.extend({
-
-        /**
-         * Posible options auto or never
-         */
-        destructionPolicy:"auto",
-
-        /**
-         * Reference to parent StackNavigator
-         */
-        stackNavigator:null,
-
-        /**
-         *
-         */
-        rendered:false,
-
-        setStackNavigator:function (stackNavigator, navigationOptions) {
-            this.stackNavigator = stackNavigator;
-
-            if (navigationOptions) {
-                if (navigationOptions.destructionPolicy)
-                    this.destructionPolicy = navigationOptions.destructionPolicy;
-            }
-
-            // Setting default styles
-            this.$el.css({position:'absolute', overflow:'hidden', width:'100%', height:'100%'});
-        }
-
-    });
-
-    return StackView;
-});
 define('effects/vendorPrefix',[], function () {
 
     /**
@@ -379,25 +344,50 @@ define('effects/vendorPrefix',[], function () {
         }
     }
 
-    return (vendorPrefix || '');
+    return (vendorPrefix.toLowerCase() || '');
 });
 define('effects/Effect',['effects/vendorPrefix'], function (vendorPrefix) {
 
     var Effect = function Effect(params) {
 
-        if (this.params)
-            this.params = _.extend(this.params, params);
-        else
-            this.params = params;
+        if (params) _.extend(this, params);
 
         this.vendorPrefix = vendorPrefix;
 
-        if (this.vendorPrefix == 'Moz' || this.vendorPrefix == '')
-            this.transitionEndEvent = 'transitionend';
-        else if (this.vendorPrefix == 'ms')
-            this.transitionEndEvent = 'MSTransitionEnd';
-        else
-            this.transitionEndEvent = this.vendorPrefix.toLowerCase() + 'TransitionEnd';
+        if (this.vendorPrefix == 'Moz' || this.vendorPrefix == '') this.transitionEndEvent = 'transitionend';
+        else if (this.vendorPrefix == 'ms') this.transitionEndEvent = 'MSTransitionEnd';
+        else this.transitionEndEvent = this.vendorPrefix + 'TransitionEnd';
+
+    };
+
+    Effect.prototype.addTimeoutFallback = function (cleanupFunction) {
+
+//        // This is a fallback for situations when TransitionEnd event doesn't get triggered
+//        var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
+//            Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
+//        timeout = setTimeout(function () {
+//            if (activeTransitions > 0) {
+//                activeTransitions = -1;
+//
+//                console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+//
+//                if ($toView) {
+//                    $toView.off(that.transitionEndEvent, transitionEndHandler);
+//                    $toView.css(transitionProp, '');
+//                    $toView.css(transformProp, '');
+//                    $toView.css('left', 0);
+//                }
+//
+//                if ($fromView) {
+//                    $fromView.off(that.transitionEndEvent, transitionEndHandler);
+//                    $fromView.css(transitionProp, '');
+//                    $fromView.css(transformProp, '');
+//                }
+//
+//                callback.call(context);
+//            }
+//        }, transDuration * 1.5 * 1000);
+
 
     };
 
@@ -442,8 +432,7 @@ define('effects/NoEffect',['effects/Effect'], function (Effect) {
     NoEffect.prototype.play = function ($fromView, $toView, callback, context) {
         if ($toView) {
             // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
+            $toView.css('visibility', 'visible');
         }
         callback.call(context);
     };
@@ -454,95 +443,150 @@ define('effects/SlideEffect',['effects/Effect'], function (Effect) {
 
     var SlideEffect = Effect.extend({
 
-        params:{
-            direction:'left',
-            fromViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0},
-            toViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0}
-        }
+        direction:'left',
 
+        fromViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0},
+
+        toViewTransitionProps:{duration:0.4, easing:'ease-out', delay:0},
+
+        play:function ($fromView, $toView, callback, context) {
+
+            var timeout,
+                that = this,
+                activeTransitions = 0,
+                transformParams,
+                transformProp = that.vendorPrefix == '' ? 'transform' :
+                    ['-' + that.vendorPrefix, '-', 'transform'].join(''),
+                transitionProp = that.vendorPrefix == '' ? 'transition' :
+                    ['-' + that.vendorPrefix, '-', 'transition'].join('');
+
+            var transitionEndHandler = function (event) {
+                if (activeTransitions >= 0) {
+                    activeTransitions--;
+
+                    event.target.style[transitionProp] = '';
+                    event.target.style[transformProp] = '';
+
+                    if ($toView && $toView[0] == event.target) $toView.css('left', 0);
+
+                    if (activeTransitions == 0 && callback) {
+                        if (timeout) clearTimeout(timeout);
+                        callback.call(context);
+                    }
+                }
+            };
+
+            if ($fromView) {
+                activeTransitions++;
+
+                $fromView.one(that.transitionEndEvent, transitionEndHandler);
+
+                $fromView.css('left', 0);
+                $fromView.css(transitionProp, [transformProp, ' ',
+                                               that.fromViewTransitionProps.duration, 's ',
+                                               that.fromViewTransitionProps.easing, ' ',
+                                               that.fromViewTransitionProps.delay, 's'].join(''));
+            }
+
+            if ($toView) {
+                activeTransitions++;
+
+                $toView.one(that.transitionEndEvent, transitionEndHandler);
+
+                $toView.css('left', that.direction == 'left' ? context.$el.width() : -context.$el.width());
+                $toView.css(transitionProp, [transformProp, ' ',
+                                             that.toViewTransitionProps.duration, 's ',
+                                             that.toViewTransitionProps.easing, ' ',
+                                             that.toViewTransitionProps.delay, 's'].join(''));
+
+                // Showing the view
+                $toView.css('visibility', 'visible');
+            }
+
+            if ($fromView || $toView) {
+                // This is a hack to force DOM reflow before transition starts
+                context.$el.css('width');
+
+                transformParams = 'translate3d(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px, 0, 0)';
+            }
+
+
+            // This is a fallback for situations when TransitionEnd event doesn't get triggered
+            var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
+                Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
+
+            timeout = setTimeout(function () {
+                if (activeTransitions > 0) {
+                    activeTransitions = -1;
+
+                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+
+                    if ($toView) {
+                        $toView.off(that.transitionEndEvent, transitionEndHandler);
+                        $toView.css(transitionProp, '');
+                        $toView.css(transformProp, '');
+                        $toView.css('left', 0);
+                    }
+
+                    if ($fromView) {
+                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
+                        $fromView.css(transitionProp, '');
+                        $fromView.css(transformProp, '');
+                    }
+
+                    callback.call(context);
+                }
+            }, transDuration * 1.5 * 1000);
+
+            if ($fromView && $toView)
+                $fromView[0].style[transformProp] = $toView[0].style[transformProp] = transformParams;
+            else if ($toView)
+                $toView[0].style[transformProp] = transformParams;
+            else if ($fromView)
+                $fromView[0].style[transformProp] = transformParams;
+        }
     });
-
-    SlideEffect.prototype.play = function ($fromView, $toView, callback, context) {
-        var that = this,
-            activeTransitions = 0,
-            transformParams,
-            timeout;
-
-        var transitionEndHandler = function (event) {
-            activeTransitions--;
-            $(event.target)[0].style[that.vendorPrefix + 'Transition'] = '';
-
-            if (activeTransitions == 0 && callback) {
-                callback.call(context);
-            }
-        };
-
-        if ($fromView) {
-            activeTransitions++;
-
-            $fromView.one(that.transitionEndEvent, transitionEndHandler);
-            $fromView.css('left', 0);
-            $fromView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
-                that.params.fromViewTransitionProps.duration, 's ',
-                that.params.fromViewTransitionProps.easing, ' ',
-                that.params.fromViewTransitionProps.delay, 's'].join('');
-        }
-
-        if ($toView) {
-            activeTransitions++;
-
-            $toView.one(that.transitionEndEvent, transitionEndHandler);
-            $toView.css('left', that.params.direction == 'left' ? context.$el.width() : -context.$el.width());
-            $toView[0].style[that.vendorPrefix + 'Transition'] = ['all ',
-                that.params.toViewTransitionProps.duration, 's ',
-                that.params.toViewTransitionProps.easing, ' ',
-                that.params.toViewTransitionProps.delay, 's'].join('');
-
-            // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
-        }
-
-        if ($fromView || $toView) {
-            // This is a hack to force DOM reflow before transition starts
-            context.$el.css('width');
-            transformParams = 'translateX(' + (that.params.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
-        }
-
-        // This is a fallback for situations when TransitionEnd event doesn't get triggered
-        var transDuration = Math.max(that.params.fromViewTransitionProps.duration, that.params.toViewTransitionProps.duration) +
-            Math.max(that.params.fromViewTransitionProps.delay, that.params.toViewTransitionProps.delay);
-        timeout = setTimeout(function () {
-            if (activeTransitions > 0) {
-                activeTransitions = -1;
-
-                console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
-
-                if ($toView) {
-                    $toView.off(that.transitionEndEvent, transitionEndHandler);
-                    $toView[0].style[that.vendorPrefix + 'Transition'] = '';
-                }
-
-                if ($fromView) {
-                    $fromView.off(that.transitionEndEvent, transitionEndHandler);
-                    $fromView[0].style[that.vendorPrefix + 'Transition'] = '';
-                }
-
-                callback.call(context);
-            }
-        }, transDuration * 1.5 * 1000);
-
-        if ($fromView && $toView)
-            $fromView[0].style[that.vendorPrefix + 'Transform'] = $toView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
-        else if ($toView)
-            $toView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
-        else if ($fromView)
-            $fromView[0].style[that.vendorPrefix + 'Transform'] = transformParams;
-    };
 
     return SlideEffect;
 });
 define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
+
+    /**
+     * Rendering the view and setting props required by StackNavigator
+     *
+     * @param view - view to be rendered
+     * @param stackNavigator - view StackNavigator instance
+     */
+    var appendView = function (view, stackNavigator) {
+
+        if (!view.__backStackRendered__) {
+
+            // Setting ref to parent StackNavigator
+            view.stackNavigator = stackNavigator;
+
+            // Setting default destructionPolicy if it's not set
+            if (typeof view.destructionPolicy === 'undefined') view.destructionPolicy = 'auto';
+
+            // Setting default styles
+            view.$el.css({position:'absolute', visibility:'hidden', overflow:'hidden', width:'100%', height:'100%'});
+
+        } else {
+            // Resetting visibility to hidden
+            view.$el.css({visibility:'hidden'});
+        }
+
+        // Adding view to the DOM
+        stackNavigator.$el.append(view.el);
+
+        if (!view.__backStackRendered__) {
+            // Rendering the view
+            view.render.call(view);
+
+            // Setting default of __backStackRendered__ property
+            view.__backStackRendered__ = true;
+        }
+
+    }
 
     /**
      * Private common push method.
@@ -553,18 +597,9 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
      */
     var push = function (fromViewRef, toViewRef, transition) {
 
-        // Hiding view
-        toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
-        toViewRef.instance.$el.css('display', 'none');
-
-        // Adding view to the DOM
-        this.$el.append(toViewRef.instance.$el);
-
         // Rendering view if required
-        if (!toViewRef.instance.rendered) {
-            toViewRef.instance.render.call(toViewRef.instance);
-            toViewRef.instance.rendered = true;
-        }
+        appendView(toViewRef.instance, this);
+
         // Adding view to the stack internal array
         this.viewsStack.push(toViewRef);
 
@@ -604,26 +639,16 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
 
         if (toViewRef) {
 
+            // Recreating view instance
             if (!toViewRef.instance) {
                 // Getting view class declaration
                 var viewClass = toViewRef.viewClass;
                 // Creating view instance
                 toViewRef.instance = new viewClass(toViewRef.options);
-                // Setting ref to StackNavigator
-                toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
             }
 
-            // Hiding view
-            toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
-            toViewRef.instance.$el.css('display', 'none');
-
-            // Adding view to the DOM
-            this.$el.append(toViewRef.instance.$el);
             // Rendering view if required
-            if (!toViewRef.instance.rendered) {
-                toViewRef.instance.render.call(toViewRef.instance);
-                toViewRef.instance.rendered = true;
-            }
+            appendView(toViewRef.instance, this);
 
         }
 
@@ -646,6 +671,9 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
             }, this);
     };
 
+    /**
+     * StackNavigator implementation
+     */
     var StackNavigator = Backbone.View.extend({
 
         viewsStack:null,
@@ -678,8 +706,10 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
                 isViewInstance = (typeof view !== 'function'),
                 fromViewRef = _.last(this.viewsStack);
 
+            // Creating new view instance if it is necessary
             toView = (!isViewInstance) ? new view(viewOptions) : view;
-            toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
+
+            // Creating new view ref
             toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
 
             var event = $.Event('viewChanging',
@@ -765,7 +795,6 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
                     fromViewRef = this.viewsStack[this.viewsStack.length - 1];
 
                 toView = (!isViewInstance) ? new view(viewOptions) : view;
-                toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
                 toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
 
                 var event = $.Event('viewChanging',
@@ -787,6 +816,37 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
                 }
             }
             return null;
+        },
+
+        replaceAll:function (view, viewOptions, transition) {
+            if (this.viewsStack.length > 0) {
+
+                var toView, toViewRef,
+                    isViewInstance = (typeof view !== 'function'),
+                    fromViewRef = this.viewsStack[this.viewsStack.length - 1];
+
+                toView = (!isViewInstance) ? new view(viewOptions) : view;
+                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
+
+                var event = $.Event('viewChanging',
+                    {
+                        action:'replaceAll',
+                        fromViewClass:fromViewRef.viewClass,
+                        fromView:fromViewRef.instance,
+                        toViewClass:toViewRef.viewClass,
+                        toView:toViewRef.instance
+                    });
+                this.trigger(event.type, event);
+
+                if (!event.isDefaultPrevented()) {
+
+                    this.viewsStack.splice(0, this.viewsStack.length);
+                    push.call(this, fromViewRef, toViewRef, transition);
+
+                    return toView;
+                }
+            }
+            return null;
         }
     });
 
@@ -795,93 +855,99 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
 define('effects/FadeEffect',['effects/Effect'], function (Effect) {
 
     var FadeEffect = Effect.extend({
-        params:{
-            fromViewTransitionProps:{duration:0.4, easing:'linear', delay:0.1},
-            toViewTransitionProps:{duration:0.4, easing:'linear', delay:0.1}
+
+        fromViewTransitionProps:{duration:0.4, easing:'linear', delay:0.1},
+
+        toViewTransitionProps:{duration:0.4, easing:'linear', delay:0.1},
+
+        play:function ($fromView, $toView, callback, context) {
+
+            var that = this,
+                timeout,
+                activeTransitions = 0,
+                transitionProp = that.vendorPrefix == '' ? 'transition'
+                    : ['-' + that.vendorPrefix.toLowerCase(), '-', 'transition'].join('');
+
+            var transitionEndHandler = function (event) {
+                if (activeTransitions >= 0) {
+                    activeTransitions--;
+                    event.target.style[transitionProp] = '';
+
+                    if (activeTransitions == 0 && callback) {
+                        if (timeout) clearTimeout(timeout);
+                        callback.call(context);
+                    }
+                }
+            };
+
+            if ($fromView) {
+                activeTransitions++;
+
+                // Registering transition end handler
+                $fromView.one(that.transitionEndEvent, transitionEndHandler);
+
+                // Setting transition css props
+                $fromView.css(transitionProp, ['opacity ', that.fromViewTransitionProps.duration, 's ',
+                                               that.fromViewTransitionProps.easing, ' ',
+                                               that.fromViewTransitionProps.delay, 's'].join(''));
+            }
+
+            if ($toView) {
+                activeTransitions++;
+
+                $toView.one(that.transitionEndEvent, transitionEndHandler);
+
+                // Setting initial opacity
+                $toView.css('opacity', 0);
+
+                // Setting transition css props
+                $toView.css(transitionProp, ['opacity ', that.toViewTransitionProps.duration, 's ',
+                                             that.toViewTransitionProps.easing, ' ',
+                                             that.toViewTransitionProps.delay, 's'].join(''));
+
+                // Showing the view
+                $toView.css('visibility', 'visible');
+            }
+
+            // This is a hack to force DOM reflow before transition starts
+            context.$el.css('width');
+
+            // This is a fallback for situations when TransitionEnd event doesn't get triggered
+            var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
+                Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
+
+            timeout = setTimeout(function () {
+                if (activeTransitions > 0) {
+                    activeTransitions = -1;
+
+                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+
+                    if ($toView) {
+                        $toView.off(that.transitionEndEvent, transitionEndHandler);
+                        $toView.css(transitionProp, '');
+                    }
+
+                    if ($fromView) {
+                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
+                        $fromView.css(transitionProp, '');
+                    }
+
+                    callback.call(context);
+                }
+            }, transDuration * 1.5 * 1000);
+
+            if ($toView) $toView.css('opacity', 1);
+            if ($fromView) $fromView.css('opacity', 0);
         }
     });
 
-    FadeEffect.prototype.play = function ($fromView, $toView, callback, context) {
-        var that = this,
-            activeTransitions = 0,
-            timeout;
-
-        var transitionEndHandler = function (event) {
-            activeTransitions--;
-            $(event.target)[0].style[that.vendorPrefix + 'Transition'] = '';
-
-            if (activeTransitions == 0 && callback) {
-                if (timeout) clearTimeout(timeout);
-                callback.call(context);
-            }
-        };
-
-        if ($fromView) {
-            activeTransitions++;
-
-            $fromView.one(that.transitionEndEvent, transitionEndHandler);
-            $fromView[0].style[that.vendorPrefix + 'Transition'] = ['opacity ',
-                that.params.fromViewTransitionProps.duration, 's ',
-                that.params.fromViewTransitionProps.easing, ' ',
-                that.params.fromViewTransitionProps.delay, 's'].join('');
-        }
-
-        if ($toView) {
-            activeTransitions++;
-
-            // Setting initial opacity
-            $toView.css('opacity', 0);
-            $toView.one(that.transitionEndEvent, transitionEndHandler);
-            $toView[0].style[that.vendorPrefix + 'Transition'] = ['opacity ',
-                that.params.toViewTransitionProps.duration, 's ',
-                that.params.toViewTransitionProps.easing, ' ',
-                that.params.toViewTransitionProps.delay, 's'].join('');
-
-            // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
-        }
-
-        // This is a hack to force DOM reflow before transition starts
-        context.$el.css('width');
-
-        // This is a fallback for situations when TransitionEnd event doesn't get triggered
-        var transDuration = Math.max(that.params.fromViewTransitionProps.duration, that.params.toViewTransitionProps.duration) +
-            Math.max(that.params.fromViewTransitionProps.delay, that.params.toViewTransitionProps.delay);
-        timeout = setTimeout(function () {
-            if (activeTransitions > 0) {
-                activeTransitions = -1;
-
-                console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
-
-                if ($toView) {
-                    $toView.off(that.transitionEndEvent, transitionEndHandler);
-                    $toView[0].style[that.vendorPrefix + 'Transition'] = '';
-                }
-
-                if ($fromView) {
-                    $fromView.off(that.transitionEndEvent, transitionEndHandler);
-                    $fromView[0].style[that.vendorPrefix + 'Transition'] = '';
-                }
-
-                callback.call(context);
-            }
-        }, transDuration * 1.5 * 1000);
-
-        if ($toView)
-            $toView.css('opacity', 1);
-
-        if ($fromView)
-            $fromView.css('opacity', 0);
-    };
-
     return FadeEffect;
 });
-define('BackStack',['StackNavigator', 'StackView', 'effects/NoEffect', 'effects/SlideEffect', 'effects/FadeEffect'],
-    function (StackNavigator, StackView, NoEffect, SlideEffect, FadeEffect) {
+define('BackStack',['StackNavigator', 'effects/Effect', 'effects/NoEffect', 'effects/SlideEffect', 'effects/FadeEffect'],
+    function (StackNavigator, Effect, NoEffect, SlideEffect, FadeEffect) {
 
         BackStack.StackNavigator = StackNavigator;
-        BackStack.StackView = StackView;
+        BackStack.Effect = Effect;
         BackStack.NoEffect = NoEffect;
         BackStack.SlideEffect = SlideEffect;
         BackStack.FadeEffect = FadeEffect;
