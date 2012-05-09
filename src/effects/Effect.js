@@ -6,7 +6,7 @@ define(['effects/vendorPrefix'], function (vendorPrefix) {
 
         this.vendorPrefix = vendorPrefix;
 
-        if (this.vendorPrefix == 'Moz' || this.vendorPrefix == '') this.transitionEndEvent = 'transitionend';
+        if (this.vendorPrefix == 'moz' || this.vendorPrefix == '') this.transitionEndEvent = 'transitionend';
         else if (this.vendorPrefix == 'ms') this.transitionEndEvent = 'MSTransitionEnd';
         else this.transitionEndEvent = this.vendorPrefix + 'TransitionEnd';
 
