@@ -360,37 +360,6 @@ define('effects/Effect',['effects/vendorPrefix'], function (vendorPrefix) {
 
     };
 
-    Effect.prototype.addTimeoutFallback = function (cleanupFunction) {
-
-//        // This is a fallback for situations when TransitionEnd event doesn't get triggered
-//        var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
-//            Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
-//        timeout = setTimeout(function () {
-//            if (activeTransitions > 0) {
-//                activeTransitions = -1;
-//
-//                console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
-//
-//                if ($toView) {
-//                    $toView.off(that.transitionEndEvent, transitionEndHandler);
-//                    $toView.css(transitionProp, '');
-//                    $toView.css(transformProp, '');
-//                    $toView.css('left', 0);
-//                }
-//
-//                if ($fromView) {
-//                    $fromView.off(that.transitionEndEvent, transitionEndHandler);
-//                    $fromView.css(transitionProp, '');
-//                    $fromView.css(transformProp, '');
-//                }
-//
-//                callback.call(context);
-//            }
-//        }, transDuration * 1.5 * 1000);
-
-
-    };
-
     // Shared empty constructor function to aid in prototype-chain creation.
     var ctor = function () {
     };
@@ -507,36 +476,35 @@ define('effects/SlideEffect',['effects/Effect'], function (Effect) {
                 // This is a hack to force DOM reflow before transition starts
                 context.$el.css('width');
 
-                transformParams = 'translate3d(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px, 0, 0)';
+                transformParams = 'translateX(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
             }
-
 
             // This is a fallback for situations when TransitionEnd event doesn't get triggered
             var transDuration = Math.max(that.fromViewTransitionProps.duration, that.toViewTransitionProps.duration) +
                 Math.max(that.fromViewTransitionProps.delay, that.toViewTransitionProps.delay);
 
-            timeout = setTimeout(function () {
-                if (activeTransitions > 0) {
-                    activeTransitions = -1;
-
-                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
-
-                    if ($toView) {
-                        $toView.off(that.transitionEndEvent, transitionEndHandler);
-                        $toView.css(transitionProp, '');
-                        $toView.css(transformProp, '');
-                        $toView.css('left', 0);
-                    }
-
-                    if ($fromView) {
-                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
-                        $fromView.css(transitionProp, '');
-                        $fromView.css(transformProp, '');
-                    }
-
-                    callback.call(context);
-                }
-            }, transDuration * 1.5 * 1000);
+//            timeout = setTimeout(function () {
+//                if (activeTransitions > 0) {
+//                    activeTransitions = -1;
+//
+//                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+//
+//                    if ($toView) {
+//                        $toView.off(that.transitionEndEvent, transitionEndHandler);
+//                        $toView.css(transitionProp, '');
+//                        $toView.css(transformProp, '');
+//                        $toView.css('left', 0);
+//                    }
+//
+//                    if ($fromView) {
+//                        $fromView.off(that.transitionEndEvent, transitionEndHandler);
+//                        $fromView.css(transitionProp, '');
+//                        $fromView.css(transformProp, '');
+//                    }
+//
+//                    callback.call(context);
+//                }
+//            }, transDuration * 1.5 * 1000);
 
             if ($fromView && $toView)
                 $fromView[0].style[transformProp] = $toView[0].style[transformProp] = transformParams;
