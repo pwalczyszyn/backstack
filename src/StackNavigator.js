@@ -1,6 +1,43 @@
 define(['effects/SlideEffect'], function (SlideEffect) {
 
     /**
+     * Rendering the view and setting props required by StackNavigator
+     *
+     * @param view - view to be rendered
+     * @param stackNavigator - view StackNavigator instance
+     */
+    var appendView = function (view, stackNavigator) {
+
+        if (!view.__backStackRendered__) {
+
+            // Setting ref to parent StackNavigator
+            view.stackNavigator = stackNavigator;
+
+            // Setting default destructionPolicy if it's not set
+            if (typeof view.destructionPolicy === 'undefined') view.destructionPolicy = 'auto';
+
+            // Setting default styles
+            view.$el.css({position:'absolute', visibility:'hidden', overflow:'hidden', width:'100%', height:'100%'});
+
+        } else {
+            // Resetting visibility to hidden
+            view.$el.css({visibility:'hidden'});
+        }
+
+        // Adding view to the DOM
+        stackNavigator.$el.append(view.el);
+
+        if (!view.__backStackRendered__) {
+            // Rendering the view
+            view.render.call(view);
+
+            // Setting default of __backStackRendered__ property
+            view.__backStackRendered__ = true;
+        }
+
+    }
+
+    /**
      * Private common push method.
      *
      * @param fromViewRef - reference to from view
@@ -9,18 +46,9 @@ define(['effects/SlideEffect'], function (SlideEffect) {
      */
     var push = function (fromViewRef, toViewRef, transition) {
 
-        // Hiding view
-        toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
-        toViewRef.instance.$el.css('display', 'none');
-
-        // Adding view to the DOM
-        this.$el.append(toViewRef.instance.el);
-
         // Rendering view if required
-        if (!toViewRef.instance.rendered) {
-            toViewRef.instance.render.call(toViewRef.instance);
-            toViewRef.instance.rendered = true;
-        }
+        appendView(toViewRef.instance, this);
+
         // Adding view to the stack internal array
         this.viewsStack.push(toViewRef);
 
@@ -60,26 +88,16 @@ define(['effects/SlideEffect'], function (SlideEffect) {
 
         if (toViewRef) {
 
+            // Recreating view instance
             if (!toViewRef.instance) {
                 // Getting view class declaration
                 var viewClass = toViewRef.viewClass;
                 // Creating view instance
                 toViewRef.instance = new viewClass(toViewRef.options);
-                // Setting ref to StackNavigator
-                toViewRef.instance.setStackNavigator(this, toViewRef.options ? toViewRef.options.navigationOptions : null);
             }
 
-            // Hiding view
-            toViewRef.instance.$el.data('original-display', toViewRef.instance.$el.css('display'));
-            toViewRef.instance.$el.css('display', 'none');
-
-            // Adding view to the DOM
-            this.$el.append(toViewRef.instance.$el);
             // Rendering view if required
-            if (!toViewRef.instance.rendered) {
-                toViewRef.instance.render.call(toViewRef.instance);
-                toViewRef.instance.rendered = true;
-            }
+            appendView(toViewRef.instance, this);
 
         }
 
@@ -102,6 +120,9 @@ define(['effects/SlideEffect'], function (SlideEffect) {
             }, this);
     };
 
+    /**
+     * StackNavigator implementation
+     */
     var StackNavigator = Backbone.View.extend({
 
         viewsStack:null,
@@ -134,8 +155,10 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 isViewInstance = (typeof view !== 'function'),
                 fromViewRef = _.last(this.viewsStack);
 
+            // Creating new view instance if it is necessary
             toView = (!isViewInstance) ? new view(viewOptions) : view;
-            toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
+
+            // Creating new view ref
             toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
 
             var event = $.Event('viewChanging',
@@ -221,7 +244,6 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                     fromViewRef = this.viewsStack[this.viewsStack.length - 1];
 
                 toView = (!isViewInstance) ? new view(viewOptions) : view;
-                toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
                 toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
 
                 var event = $.Event('viewChanging',
@@ -253,7 +275,6 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                     fromViewRef = this.viewsStack[this.viewsStack.length - 1];
 
                 toView = (!isViewInstance) ? new view(viewOptions) : view;
-                toView.setStackNavigator(this, (viewOptions) ? viewOptions.navigationOptions : null);
                 toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions};
 
                 var event = $.Event('viewChanging',

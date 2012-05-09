@@ -28,9 +28,9 @@ define(['effects/Effect'], function (Effect) {
 
             $fromView.one(that.transitionEndEvent, transitionEndHandler);
             $fromView[0].style[that.vendorPrefix + 'Transition'] = ['opacity ',
-                that.fromViewTransitionProps.duration, 's ',
-                that.fromViewTransitionProps.easing, ' ',
-                that.fromViewTransitionProps.delay, 's'].join('');
+                                                                    that.fromViewTransitionProps.duration, 's ',
+                                                                    that.fromViewTransitionProps.easing, ' ',
+                                                                    that.fromViewTransitionProps.delay, 's'].join('');
         }
 
         if ($toView) {
@@ -40,13 +40,12 @@ define(['effects/Effect'], function (Effect) {
             $toView.css('opacity', 0);
             $toView.one(that.transitionEndEvent, transitionEndHandler);
             $toView[0].style[that.vendorPrefix + 'Transition'] = ['opacity ',
-                that.toViewTransitionProps.duration, 's ',
-                that.toViewTransitionProps.easing, ' ',
-                that.toViewTransitionProps.delay, 's'].join('');
+                                                                  that.toViewTransitionProps.duration, 's ',
+                                                                  that.toViewTransitionProps.easing, ' ',
+                                                                  that.toViewTransitionProps.delay, 's'].join('');
 
             // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
+            $toView.css('visibility', 'visible');
         }
 
         // This is a hack to force DOM reflow before transition starts

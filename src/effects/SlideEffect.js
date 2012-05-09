@@ -40,9 +40,9 @@ define(['effects/Effect'], function (Effect) {
             $fromView.one(that.transitionEndEvent, transitionEndHandler);
             $fromView.css('left', 0);
             $fromView.css(transitionProp, [transformProp, ' ',
-                that.fromViewTransitionProps.duration, 's ',
-                that.fromViewTransitionProps.easing, ' ',
-                that.fromViewTransitionProps.delay, 's'].join(''));
+                                           that.fromViewTransitionProps.duration, 's ',
+                                           that.fromViewTransitionProps.easing, ' ',
+                                           that.fromViewTransitionProps.delay, 's'].join(''));
         }
 
         if ($toView) {
@@ -51,13 +51,12 @@ define(['effects/Effect'], function (Effect) {
             $toView.one(that.transitionEndEvent, transitionEndHandler);
             $toView.css('left', that.direction == 'left' ? context.$el.width() : -context.$el.width());
             $toView.css(transitionProp, [transformProp, ' ',
-                that.toViewTransitionProps.duration, 's ',
-                that.toViewTransitionProps.easing, ' ',
-                that.toViewTransitionProps.delay, 's'].join(''));
+                                         that.toViewTransitionProps.duration, 's ',
+                                         that.toViewTransitionProps.easing, ' ',
+                                         that.toViewTransitionProps.delay, 's'].join(''));
 
             // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
+            $toView.css('visibility', 'visible');
         }
 
         if ($fromView || $toView) {

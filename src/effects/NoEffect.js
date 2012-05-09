@@ -4,8 +4,7 @@ define(['effects/Effect'], function (Effect) {
     NoEffect.prototype.play = function ($fromView, $toView, callback, context) {
         if ($toView) {
             // Showing the view
-            $toView.css('display', $toView.data('original-display'));
-            $toView.removeData('original-display');
+            $toView.css('visibility', 'visible');
         }
         callback.call(context);
     };
