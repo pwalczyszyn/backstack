@@ -44,11 +44,7 @@ var ViewTwo = Backbone.View.extend({
 
 function initBackbone() {
 
-    var popTransition = new BackStack.FadeEffect,
-
-        pushTransition = new BackStack.FadeEffect,
-
-        navigator = new BackStack.StackNavigator({
+    var navigator = new BackStack.StackNavigator({
             el:'#container',
             popTransition:popTransition,
             pushTransition:pushTransition
