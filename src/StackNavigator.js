@@ -148,6 +148,12 @@ define(['effects/SlideEffect'], function (SlideEffect) {
 
             // Setting new viewsStack array
             this.viewsStack = [];
+
+            // Setting default pop transition
+            if (options.popTransition) this.defaultPopTransition = options.popTransition;
+
+            // Setting default push transition
+            if (options.pushTransition) this.defaultPushTransition = options.pushTransition;
         },
 
         pushView:function (view, viewOptions, transition) {

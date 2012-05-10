@@ -23,8 +23,9 @@ define(['effects/Effect'], function (Effect) {
                 if (activeTransitions >= 0) {
                     activeTransitions--;
 
-                    event.target.style[transitionProp] = '';
-                    event.target.style[transformProp] = '';
+                    var $target = $(event.target);
+                    $target.css(transformProp, '');
+                    $target.css(transitionProp, '');
 
                     if ($toView && $toView[0] == event.target) $toView.css('left', 0);
 
@@ -96,12 +97,12 @@ define(['effects/Effect'], function (Effect) {
                 }
             }, transDuration * 1.5 * 1000);
 
-            if ($fromView && $toView)
-                $fromView[0].style[transformProp] = $toView[0].style[transformProp] = transformParams;
-            else if ($toView)
-                $toView[0].style[transformProp] = transformParams;
-            else if ($fromView)
-                $fromView[0].style[transformProp] = transformParams;
+            var $views;
+            if ($fromView && $toView) $views = $fromView.add($toView);
+            else if ($toView) $views = $toView;
+            else if ($fromView) $views = $fromView;
+
+            if ($views) $views.css(transformProp, transformParams);
         }
     });
 

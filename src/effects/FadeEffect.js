@@ -17,7 +17,8 @@ define(['effects/Effect'], function (Effect) {
             var transitionEndHandler = function (event) {
                 if (activeTransitions >= 0) {
                     activeTransitions--;
-                    event.target.style[transitionProp] = '';
+
+                    $(event.target).css(transitionProp, '');
 
                     if (activeTransitions == 0 && callback) {
                         if (timeout) clearTimeout(timeout);
