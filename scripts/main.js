@@ -1,10 +1,3 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: pwalczys
- * Date: 2/9/12
- * Time: 3:54 PM
- * To change this template use File | Settings | File Templates.
- */
 
 var ViewOne = Backbone.View.extend({
 
@@ -42,13 +35,9 @@ var ViewTwo = Backbone.View.extend({
     }
 });
 
-function initBackbone() {
+function onBodyLoad() {
 
-    var navigator = new BackStack.StackNavigator({
-            el:'#container',
-            popTransition:popTransition,
-            pushTransition:pushTransition
-        });
-
+    var navigator = new BackStack.StackNavigator({el:'#container'});
     navigator.pushView(ViewOne);
+
 }
