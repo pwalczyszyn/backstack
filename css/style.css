@@ -1,0 +1,23 @@
+#tabletContainer {
+    position: relative;
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#container {
+    position: absolute;
+    overflow: hidden;
+    width: 769px;
+    height: 576px;
+    left: 96px;
+    top: 86px;
+    background-color: #add8e6;
+}
+
+#container > div {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}

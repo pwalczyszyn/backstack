@@ -1,4 +1,3 @@
-
 var ViewOne = Backbone.View.extend({
 
     id:'viewOne',
@@ -8,6 +7,9 @@ var ViewOne = Backbone.View.extend({
     },
 
     render:function () {
+
+        console.log($('#aboutTemplate').html());
+
         this.$el.html('<p>This is ViewOne </p><p><button>Push ViewTwo</button></p>');
         return this;
     },
