@@ -6,20 +6,21 @@
  * Time: 3:23 PM
  */
 
-var ViewTwo = Backbone.View.extend({
+var IntroView = Backbone.View.extend({
 
-    id:'viewTwo',
+    id:'introView',
 
     events:{
         'click button':'button_clickHandler'
     },
 
     render:function () {
-        this.$el.html('<p>This is a ViewTwo </p><p><button>Pop ViewTwo</button></p>');
+        this.$el.html($('#introTemplate').html());
         return this;
     },
 
     button_clickHandler:function (event) {
-        this.stackNavigator.popView();
+        this.stackNavigator.pushView(AboutView);
     }
+
 });

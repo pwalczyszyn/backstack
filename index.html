@@ -12,16 +12,27 @@
     <script type="text/javascript" src="scripts/libs/underscore/underscore-min.js"></script>
     <script type="text/javascript" src="scripts/libs/backbone/backbone-min.js"></script>
     <script type="text/javascript" src="scripts/libs/backstack/backstack.js"></script>
+
+    <script type="text/javascript" src="scripts/views/IntroView.js"></script>
+    <script type="text/javascript" src="scripts/views/AboutView.js"></script>
+    <script type="text/javascript" src="scripts/views/ViewTwo.js"></script>
     <script type="text/javascript" src="scripts/main.js"></script>
 
     <!-- Templates -->
-    <script id="aboutTemplate" type="text/html">
+    <script id="introTemplate" type="text/html">
+        <div>
+            <h2>BackStack</h2>
+            <button>Click to enter...</button>
+        </div>
+    </script>
 
+
+
+    <script id="aboutTemplate" type="text/html">
         <div id="aboutView">
             <h1>This About View</h1>
-            <button id="btnAPI">API</button>
+            <button>Push ViewTwo</button>
         </div>
-
     </script>
 
 </head>
