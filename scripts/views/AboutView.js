@@ -15,7 +15,8 @@ var AboutView = Backbone.View.extend({
     },
 
     render:function () {
-        this.$el.html($('#aboutTemplate').html());
+        console.log($('#aboutTemplate').text());
+        this.$el.html($('#aboutTemplate').text());
         return this;
     },
 
