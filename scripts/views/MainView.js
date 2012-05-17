@@ -41,10 +41,8 @@ var MainView = Backbone.View.extend({
 
             var subview = this.subviews[subviewId];
             if (subview) {
-
                 // Replacing with already constructed view
                 this.subviewsNavigator.replaceView(subview);
-
             } else {
                 if (this.subviewsNavigator.activeView) // Replacing and creating new view on the stack
                     this.subviews[subviewId] = this.subviewsNavigator.replaceView(SubviewClass);

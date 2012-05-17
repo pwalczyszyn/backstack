@@ -74,3 +74,16 @@ button.nav-bar-btn {
 button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
     color: #fff;
 }
+
+#aboutView > * {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+#ifJsfiddle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 573px
+}
