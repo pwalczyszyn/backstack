@@ -3,6 +3,10 @@ body {
     background-repeat: repeat;
 }
 
+p {
+    font-family: "default-gothic";
+}
+
 #tabletContainer {
     position: relative;
     width: 960px;
@@ -18,7 +22,7 @@ body {
     height: 618px;
     left: 68px;
     top: 67px;
-    background-color: #add8e6;
+    background-color: #f9f9f9;
 }
 
 #container > div {
