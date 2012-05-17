@@ -41,3 +41,36 @@ p {
     vertical-align: middle;
     text-align: center;
 }
+
+#navBar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 45px;
+    background: #363636 url(../images/top-bar-pattern.png) repeat left top;
+}
+
+#subviewsContainer {
+    position: absolute;
+    top: 45px;
+    bottom: 0;
+    width: 100%;
+}
+
+button.nav-bar-btn {
+    font-weight: bold;
+    color: #aaaaaa;
+    font-size: 0.9em;
+    letter-spacing: 0.08em;
+    background: transparent url(../images/top-bar-separator.png) repeat-y right top !important;
+    border: none;
+    padding: 0px 12px !important;
+    position: static;
+    float: left;
+    height: 100%;
+    vertical-align: middle;
+}
+
+button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
+    color: #fff;
+}

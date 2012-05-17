@@ -6,14 +6,14 @@
  * Time: 3:23 PM
  */
 
-var AboutView = Backbone.View.extend({
+var ExampleView = Backbone.View.extend({
 
-    id:'aboutView',
+    id:'exampleView',
 
     destructionPolicy:'never',
 
     render:function () {
-        this.$el.html($('#aboutTemplate').text());
+        this.$el.html($('#exampleTamplate').html());
         return this;
     }
 

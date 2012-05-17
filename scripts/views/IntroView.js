@@ -20,7 +20,7 @@ var IntroView = Backbone.View.extend({
     },
 
     button_clickHandler:function (event) {
-        this.stackNavigator.pushView(AboutView);
+        this.stackNavigator.pushView(MainView);
     }
 
 });

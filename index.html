@@ -15,7 +15,10 @@
 
     <script type="text/javascript" src="scripts/views/IntroView.js"></script>
     <script type="text/javascript" src="scripts/views/AboutView.js"></script>
-    <script type="text/javascript" src="scripts/views/ViewTwo.js"></script>
+    <script type="text/javascript" src="scripts/views/ExampleView.js"></script>
+    <script type="text/javascript" src="scripts/views/APIView.js"></script>
+    <script type="text/javascript" src="scripts/views/MainView.js"></script>
+
     <script type="text/javascript" src="scripts/main.js"></script>
 
     <script type="text/javascript" src="http://use.typekit.com/fyi4kzh.js"></script>
@@ -29,23 +32,25 @@
         </div>
     </script>
 
+    <script id="mainTemplate" type="text/html">
+        <div id="navBar">
+            <button id="btnIntro" class="nav-bar-btn">Intro</button>
+            <button id="btnAbout" data-view="aboutView" class="nav-bar-btn">About</button>
+            <button id="btnAPI" data-view="apiView" class="nav-bar-btn">API</button>
+            <button id="btnExample" data-view="exampleView" class="nav-bar-btn">Example</button>
+        </div>
+        <div id="subviewsContainer" />
+    </script>
 
     <script id="aboutTemplate" type="text/html">
-
-        <div>
-            <p>
-                BackStack is a JavaScript component/extension for Backbone.js that allows you to create nice view
-                transitions in your HTML5 web apps. By default it comes with mobile-style slide transition, fade
-                transition and no-effect transition. It can be especially useful when building mobile applications with
-                PhoneGap/Cordova. The BackStack is conceptually based on ViewNavigator API from mobile SDK of Apache
-                Flex framework. It provides developers means to manage stack of views that can be pushed, popped, popped
-                all or replaced.
-            </p>
-
-            <iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/pwalczyszyn/dwRQU/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-        </div>
-
+        <p>
+            BackStack is a JavaScript component/extension for Backbone.js that allows you to create nice view
+            transitions in your HTML5 web apps. By default it comes with mobile-style slide transition, fade
+            transition and no-effect transition. It can be especially useful when building mobile applications with
+            PhoneGap/Cordova. The BackStack is conceptually based on ViewNavigator API from mobile SDK of Apache
+            Flex framework. It provides developers means to manage stack of views that can be pushed, popped, popped
+            all or replaced.
+        </p>
     </script>
 
     <script id="apiTemplate" type="text/html">
@@ -57,6 +62,10 @@
             <li></li>
         </ul>
         <h4>Functions:</h4>
+    </script>
+
+    <script id="exampleTamplate" type="text/html">
+        <iframe style="width: 100%; height: 573px" src="http://jsfiddle.net/pwalczyszyn/dwRQU/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
     </script>
 
 </head>

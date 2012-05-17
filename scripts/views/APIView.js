@@ -2,18 +2,18 @@
  * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
  *
  * User: pwalczys
- * Date: 5/11/12
- * Time: 3:23 PM
+ * Date: 5/17/12
+ * Time: 3:33 PM
  */
 
-var AboutView = Backbone.View.extend({
+var APIView = Backbone.View.extend({
 
-    id:'aboutView',
+    id:'apiView',
 
     destructionPolicy:'never',
 
     render:function () {
-        this.$el.html($('#aboutTemplate').text());
+        this.$el.html($('#apiTemplate').text());
         return this;
     }
 
