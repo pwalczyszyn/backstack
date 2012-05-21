@@ -67,7 +67,7 @@ define(['effects/Effect'], function (Effect) {
                 // This is a hack to force DOM reflow before transition starts
                 context.$el.css('width');
 
-                transformParams = 'translateX(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
+                transformParams = 'translate3d(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px, 0, 0)';
             }
 
             // This is a fallback for situations when TransitionEnd event doesn't get triggered

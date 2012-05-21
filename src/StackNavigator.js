@@ -183,14 +183,12 @@ define(['effects/SlideEffect'], function (SlideEffect) {
         /** @lends BackStack.StackNavigator */
         {
 
-
             /**
              * @name StackNavigator#viewChanging
              * @event
-             * @param {object} e
+             * @param {Object} e
              * @param {Boolean} [e.cancelable=true]
              */
-
 
             /**
              * An array with all the view refs on the stack.
@@ -215,7 +213,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
             /**
              * Initializes StackNavigator.
              *
-             * @param {object} options This is a Backbone.View options hash that can have popTransition and pushTransition
+             * @param {Object} options This is a Backbone.View options hash that can have popTransition and pushTransition
              * properties that can be initiated for this instance of navigator.
              *
              * @constructs
@@ -238,7 +236,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
              * Pushes new view to the stack.
              *
              * @param {Backbone.View || Backbone.ViewClass} view View class or view instance to be pushed to the stack.
-             * @param {*} viewOptions Options to be passed if view is contructed by StackNavigator.
+             * @param {Object} viewOptions Options to be passed if view is contructed by StackNavigator.
              * @param {Effect} transition Transition effect to be played when pushing new view.
              *
              * @return {Backbone.View} Instance of a pushed view.
@@ -268,6 +266,11 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 return toView;
             },
 
+            /**
+             * Pops an active view from a stack and displays one below.
+             *
+             * @param {Effect} transition Transition effect to be played when popping new view.
+             */
             popView:function (transition) {
                 if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
 
@@ -293,6 +296,11 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 pop.call(this, fromViewRef, toViewRef, 1, transition);
             },
 
+            /**
+             * Pops all views from a stack and leaves empty stack.
+             *
+             * @param {Effect} transition Transition effect to be played when popping views.
+             */
             popAll:function (transition) {
                 if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
 
@@ -316,6 +324,15 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 pop.call(this, fromViewRef, null, this.viewsStack.length, transition);
             },
 
+            /**
+             * Replaces view on top of the stack, with the one passed as a view param.
+             *
+             * @param {Backbone.View} view View to be pushed on top of the stack instead of current one.
+             * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
+             * @param {Effect} transition Transition effect to be played when replacing views.
+             *
+             * @return {Backbone.View} Instance of a pushed view.
+             */
             replaceView:function (view, viewOptions, transition) {
                 if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
 
@@ -346,6 +363,15 @@ define(['effects/SlideEffect'], function (SlideEffect) {
                 return toView;
             },
 
+            /**
+             * Replaces all of the views on the stack, with the one passed as a view param.
+             *
+             * @param {Backbone.View} view View to be pushed on top of the stack.
+             * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
+             * @param {Effect} transition Transition effect to be played when replacing views.
+             *
+             * @return {Backbone.View} Instance of a pushed view.
+             */
             replaceAll:function (view, viewOptions, transition) {
                 if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
 
