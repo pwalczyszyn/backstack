@@ -477,7 +477,7 @@ define('effects/SlideEffect',['effects/Effect'], function (Effect) {
                 // This is a hack to force DOM reflow before transition starts
                 context.$el.css('width');
 
-                transformParams = 'translateX(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px)';
+                transformParams = 'translate3d(' + (that.direction == 'left' ? -context.$el.width() : context.$el.width()) + 'px, 0, 0)';
             }
 
             // This is a fallback for situations when TransitionEnd event doesn't get triggered
@@ -521,10 +521,12 @@ define('effects/SlideEffect',['effects/Effect'], function (Effect) {
 define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
 
     /**
-     * Rendering the view and setting props required by StackNavigator
+     * Rendering the view and setting props required by StackNavigator.
+     * @private
+     * @ignore
      *
-     * @param view - view to be rendered
-     * @param stackNavigator - view StackNavigator instance
+     * @param {View} view View to be rendered.
+     * @param {StackNavigator} stackNavigator View StackNavigator instance.
      */
     var appendView = function (view, stackNavigator) {
 
@@ -557,12 +559,14 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
     }
 
     /**
-     * Creates event objects triggered by BackStack
+     * Creates event objects triggered by BackStack.
+     * @private
+     * @ignore
      *
-     * @param type event type name
-     * @param args event args
-     * @param cancelable flag indicating if event is cancelable
-     * @return {*}
+     * @param {string} type Event type name.
+     * @param {*} args Event args.
+     * @param {boolean} cancelable Flag indicating if event is cancelable.
+     * @return {event} The new object.
      */
     var createEvent = function (type, args, cancelable) {
         return _.extend({
@@ -590,12 +594,14 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
     };
 
     /**
-     * Private common push method
+     * Private common push method.
+     * @private
+     * @ignore
      *
-     * @param fromViewRef - reference to from view
-     * @param toViewRef - reference to to view
-     * @param replaceHowMany - number of views to replace with pushed view
-     * @param transition - transition to played during push
+     * @param {object} fromViewRef Reference to from view.
+     * @param {object} toViewRef Reference to to view.
+     * @param {number} replaceHowMany Number of views to replace with pushed view.
+     * @param {Effect} transition Transition to played during push.
      */
     var push = function (fromViewRef, toViewRef, replaceHowMany, transition) {
 
@@ -638,12 +644,14 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
     };
 
     /**
-     * Private common pop method
+     * Private common pop method.
+     * @private
+     * @ignore
      *
-     * @param fromViewRef - reference to from view
-     * @param toViewRef - reference to to view
-     * @param howMany - number of views to pop from the stack
-     * @param transition - transition to played during pop
+     * @param {object} fromViewRef Reference to from view.
+     * @param {object} toViewRef Reference to to view.
+     * @param {number} howMany Number of views to pop from the stack.
+     * @param {Effect} transition Transition to played during pop.
      */
     var pop = function (fromViewRef, toViewRef, howMany, transition) {
 
@@ -691,178 +699,229 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
             }, this);
     };
 
-    /**
-     * StackNavigator implementation
-     */
-    var StackNavigator = Backbone.View.extend({
+    var StackNavigator = Backbone.View.extend(
+        /** @lends BackStack.StackNavigator */
+        {
 
-        /**
-         * An array with all the view refs on the stack
-         */
-        viewsStack:null,
+            /**
+             * @name StackNavigator#viewChanging
+             * @event
+             * @param {Object} e
+             * @param {Boolean} [e.cancelable=true]
+             */
 
-        /**
-         * View on top of the stack
-         */
-        activeView:null,
+            /**
+             * An array with all the view refs on the stack.
+             */
+            viewsStack:null,
 
-        /**
-         * Default push transition effect
-         */
-        defaultPushTransition:null,
+            /**
+             * View on top of the stack.
+             */
+            activeView:null,
 
-        /**
-         * Default pop transition effect
-         */
-        defaultPopTransition:null,
+            /**
+             * Default push transition effect.
+             */
+            defaultPushTransition:null,
 
-        initialize:function (options) {
-            // Setting default styles
-            this.$el.css({overflow:'hidden'});
+            /**
+             * Default pop transition effect.
+             */
+            defaultPopTransition:null,
 
-            // Setting new viewsStack array
-            this.viewsStack = [];
+            /**
+             * Initializes StackNavigator.
+             *
+             * @param {Object} options This is a Backbone.View options hash that can have popTransition and pushTransition
+             * properties that can be initiated for this instance of navigator.
+             *
+             * @constructs
+             * */
+            initialize:function (options) {
+                // Setting default styles
+                this.$el.css({overflow:'hidden'});
 
-            // Setting default pop transition
-            if (options.popTransition) this.defaultPopTransition = options.popTransition;
+                // Setting new viewsStack array
+                this.viewsStack = [];
 
-            // Setting default push transition
-            if (options.pushTransition) this.defaultPushTransition = options.pushTransition;
-        },
+                // Setting default pop transition
+                if (options.popTransition) this.defaultPopTransition = options.popTransition;
 
-        pushView:function (view, viewOptions, transition) {
-            // Getting ref of the view on top of the stack
-            var fromViewRef = _.last(this.viewsStack),
-            // Creating new view instance if it is necessary
-                toView = _.isFunction(view) ? new view(viewOptions) : view,
-            // Creating new view ref
-                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
-            // Creating viewChanging event object and triggering it
-                event = createEvent('viewChanging',
-                    {
-                        action:'push',
-                        fromViewClass:fromViewRef ? fromViewRef.viewClass : null,
-                        fromView:fromViewRef ? fromViewRef.instance : null,
-                        toViewClass:toViewRef.viewClass,
-                        toView:toViewRef.instance
-                    },
-                    true).trigger(this);
+                // Setting default push transition
+                if (options.pushTransition) this.defaultPushTransition = options.pushTransition;
+            },
 
-            // Checking if event wasn't cancelled
-            if (event.isDefaultPrevented()) return null;
+            /**
+             * Pushes new view to the stack.
+             *
+             * @param {Backbone.View || Backbone.ViewClass} view View class or view instance to be pushed to the stack.
+             * @param {Object} viewOptions Options to be passed if view is contructed by StackNavigator.
+             * @param {Effect} transition Transition effect to be played when pushing new view.
+             *
+             * @return {Backbone.View} Instance of a pushed view.
+             */
+            pushView:function (view, viewOptions, transition) {
+                // Getting ref of the view on top of the stack
+                var fromViewRef = _.last(this.viewsStack),
+                // Creating new view instance if it is necessary
+                    toView = _.isFunction(view) ? new view(viewOptions) : view,
+                // Creating new view ref
+                    toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
+                // Creating viewChanging event object and triggering it
+                    event = createEvent('viewChanging',
+                        {
+                            action:'push',
+                            fromViewClass:fromViewRef ? fromViewRef.viewClass : null,
+                            fromView:fromViewRef ? fromViewRef.instance : null,
+                            toViewClass:toViewRef.viewClass,
+                            toView:toViewRef.instance
+                        },
+                        true).trigger(this);
 
-            push.call(this, fromViewRef, toViewRef, 0, transition);
-            return toView;
-        },
+                // Checking if event wasn't cancelled
+                if (event.isDefaultPrevented()) return null;
 
-        popView:function (transition) {
-            if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
+                push.call(this, fromViewRef, toViewRef, 0, transition);
+                return toView;
+            },
 
-            // Getting ref of the view on top of the stack
-            var fromViewRef = _.last(this.viewsStack),
-            // Getting ref of the view below current one
-                toViewRef = this.viewsStack.length > 1 ? this.viewsStack[this.viewsStack.length - 2] : null,
-            // Creating viewChanging event object and triggering it
-                event = createEvent('viewChanging',
-                    {
-                        action:'pop',
-                        fromViewClass:fromViewRef.viewClass,
-                        fromView:fromViewRef.instance,
-                        toViewClass:toViewRef ? toViewRef.viewClass : null,
-                        toView:toViewRef ? toViewRef.instance : null
-                    },
-                    true).trigger(this);
+            /**
+             * Pops an active view from a stack and displays one below.
+             *
+             * @param {Effect} transition Transition effect to be played when popping new view.
+             */
+            popView:function (transition) {
+                if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
 
-            // Checking if event wasn't cancelled
-            if (event.isDefaultPrevented()) return;
+                // Getting ref of the view on top of the stack
+                var fromViewRef = _.last(this.viewsStack),
+                // Getting ref of the view below current one
+                    toViewRef = this.viewsStack.length > 1 ? this.viewsStack[this.viewsStack.length - 2] : null,
+                // Creating viewChanging event object and triggering it
+                    event = createEvent('viewChanging',
+                        {
+                            action:'pop',
+                            fromViewClass:fromViewRef.viewClass,
+                            fromView:fromViewRef.instance,
+                            toViewClass:toViewRef ? toViewRef.viewClass : null,
+                            toView:toViewRef ? toViewRef.instance : null
+                        },
+                        true).trigger(this);
 
-            // Popping top view
-            pop.call(this, fromViewRef, toViewRef, 1, transition);
-        },
+                // Checking if event wasn't cancelled
+                if (event.isDefaultPrevented()) return;
 
-        popAll:function (transition) {
-            if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
+                // Popping top view
+                pop.call(this, fromViewRef, toViewRef, 1, transition);
+            },
 
-            // Getting ref of the view on top of the stack
-            var fromViewRef = _.last(this.viewsStack),
-            // Creating viewChanging event object and triggering it
-                event = createEvent('viewChanging',
-                    {
-                        action:'popAll',
-                        fromViewClass:fromViewRef.viewClass,
-                        fromView:fromViewRef.instance,
-                        toViewClass:null,
-                        toView:null
-                    },
-                    true).trigger(this);
+            /**
+             * Pops all views from a stack and leaves empty stack.
+             *
+             * @param {Effect} transition Transition effect to be played when popping views.
+             */
+            popAll:function (transition) {
+                if (this.viewsStack.length == 0) throw new Error('Popping from an empty stack!');
 
-            // Checking if event wasn't cancelled
-            if (event.isDefaultPrevented()) return;
+                // Getting ref of the view on top of the stack
+                var fromViewRef = _.last(this.viewsStack),
+                // Creating viewChanging event object and triggering it
+                    event = createEvent('viewChanging',
+                        {
+                            action:'popAll',
+                            fromViewClass:fromViewRef.viewClass,
+                            fromView:fromViewRef.instance,
+                            toViewClass:null,
+                            toView:null
+                        },
+                        true).trigger(this);
 
-            // Popping top view
-            pop.call(this, fromViewRef, null, this.viewsStack.length, transition);
-        },
+                // Checking if event wasn't cancelled
+                if (event.isDefaultPrevented()) return;
 
-        replaceView:function (view, viewOptions, transition) {
-            if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
+                // Popping top view
+                pop.call(this, fromViewRef, null, this.viewsStack.length, transition);
+            },
 
-            // Getting ref of the view on top of the stack
-            var fromViewRef = _.last(this.viewsStack),
-            // Creating new view instance if it is necessary
-                toView = _.isFunction(view) ? new view(viewOptions) : view,
-            // Creating new view ref
-                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
-            // Creating viewChanging event object and triggering it
-                event = createEvent('viewChanging',
-                    {
-                        action:'replace',
-                        fromViewClass:fromViewRef.viewClass,
-                        fromView:fromViewRef.instance,
-                        toViewClass:toViewRef.viewClass,
-                        toView:toViewRef.instance
-                    },
-                    true).trigger(this);
+            /**
+             * Replaces view on top of the stack, with the one passed as a view param.
+             *
+             * @param {Backbone.View} view View to be pushed on top of the stack instead of current one.
+             * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
+             * @param {Effect} transition Transition effect to be played when replacing views.
+             *
+             * @return {Backbone.View} Instance of a pushed view.
+             */
+            replaceView:function (view, viewOptions, transition) {
+                if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
 
-            // Checking if event wasn't cancelled
-            if (event.isDefaultPrevented()) return null;
+                // Getting ref of the view on top of the stack
+                var fromViewRef = _.last(this.viewsStack),
+                // Creating new view instance if it is necessary
+                    toView = _.isFunction(view) ? new view(viewOptions) : view,
+                // Creating new view ref
+                    toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
+                // Creating viewChanging event object and triggering it
+                    event = createEvent('viewChanging',
+                        {
+                            action:'replace',
+                            fromViewClass:fromViewRef.viewClass,
+                            fromView:fromViewRef.instance,
+                            toViewClass:toViewRef.viewClass,
+                            toView:toViewRef.instance
+                        },
+                        true).trigger(this);
 
-            // Pushing new view on top
-            push.call(this, fromViewRef, toViewRef, 1, transition);
+                // Checking if event wasn't cancelled
+                if (event.isDefaultPrevented()) return null;
 
-            // Returning pushed new view
-            return toView;
-        },
+                // Pushing new view on top
+                push.call(this, fromViewRef, toViewRef, 1, transition);
 
-        replaceAll:function (view, viewOptions, transition) {
-            if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
+                // Returning pushed new view
+                return toView;
+            },
 
-            // Getting ref of the view on top of the stack
-            var fromViewRef = _.last(this.viewsStack),
-            // Creating new view instance if it is necessary
-                toView = _.isFunction(view) ? new view(viewOptions) : view,
-            // Creating new view ref
-                toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
-            // Creating viewChanging event object and triggering it
-                event = createEvent('viewChanging',
-                    {
-                        action:'replaceAll',
-                        fromViewClass:fromViewRef.viewClass,
-                        fromView:fromViewRef.instance,
-                        toViewClass:toViewRef.viewClass,
-                        toView:toViewRef.instance
-                    },
-                    true).trigger(this);
+            /**
+             * Replaces all of the views on the stack, with the one passed as a view param.
+             *
+             * @param {Backbone.View} view View to be pushed on top of the stack.
+             * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
+             * @param {Effect} transition Transition effect to be played when replacing views.
+             *
+             * @return {Backbone.View} Instance of a pushed view.
+             */
+            replaceAll:function (view, viewOptions, transition) {
+                if (this.viewsStack.length == 0) throw new Error('Replacing on an empty stack!');
 
-            // Checking if event wasn't cancelled
-            if (event.isDefaultPrevented()) return null;
+                // Getting ref of the view on top of the stack
+                var fromViewRef = _.last(this.viewsStack),
+                // Creating new view instance if it is necessary
+                    toView = _.isFunction(view) ? new view(viewOptions) : view,
+                // Creating new view ref
+                    toViewRef = {instance:toView, viewClass:toView.constructor, options:viewOptions},
+                // Creating viewChanging event object and triggering it
+                    event = createEvent('viewChanging',
+                        {
+                            action:'replaceAll',
+                            fromViewClass:fromViewRef.viewClass,
+                            fromView:fromViewRef.instance,
+                            toViewClass:toViewRef.viewClass,
+                            toView:toViewRef.instance
+                        },
+                        true).trigger(this);
 
-            // Pushing new view on top
-            push.call(this, fromViewRef, toViewRef, this.viewsStack.length, transition);
+                // Checking if event wasn't cancelled
+                if (event.isDefaultPrevented()) return null;
 
-            // Returning pushed new view
-            return toView;
-        }
-    });
+                // Pushing new view on top
+                push.call(this, fromViewRef, toViewRef, this.viewsStack.length, transition);
+
+                // Returning pushed new view
+                return toView;
+            }
+        });
 
     return StackNavigator;
 });
