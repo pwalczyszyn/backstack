@@ -10,11 +10,11 @@ Of course if you are using frameworks like <a href='http://jquerymobile.com/' ta
 
 ### Are there other alternatives?
 
-You can use ViewNavigator implementation from app-UI framework built by fellow Adobe Evangelist Andy Trice. Of course you can build the transitions yourself, it is not really hard ;) or use already mentioned frameworks above.
+You can use ViewNavigator implementation from <a href="http://triceam.github.com/app-UI/" target="_blank">app-UI</a> framework built by fellow Adobe Evangelist <a href="http://tricedesigns.com/" target="_blank">Andy Trice</a>. Of course you can build the transitions yourself, it is not really hard ;) or use already mentioned frameworks above.
 
 ### How was it built?
 
-This may not be particularly interesting to everyone but to develop/package BackStack an almond library was used. Almond is a replacement AMD loader for RequireJS. It is a smaller "shim" loader, providing the minimal AMD API footprint that includes loader plugin support.
+This may not be particularly interesting to everyone but to develop/package BackStack an <a href="https://github.com/jrburke/almond" target="_blank">almond</a> library was used. Almond is a replacement AMD loader for RequireJS. It is a smaller "shim" loader, providing the minimal AMD API footprint that includes loader plugin support.
 
 ### Where can I find more info about it?
 <a href='http://pwalczyszyn.github.com/backstack' target='_blank'>Here is a demo site</a> that is actually built with BackStack. Be aware of a disclaimer that I only tested it with WebKit based browsers as I mainly used it for mobile apps development. So if you are on IE this site many not work for you, sorry for that ;)
