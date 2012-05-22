@@ -1,26 +1,33 @@
-### What is it?
-BackStack is a JavaScript component/extension for <a href='http://documentcloud.github.com/backbone' target='_blank'>Backbone.js</a> it allows you to create nice view
-transitions in your HTML5 apps. By default it comes with an implementation of mobile-style slide transitions, fade transitions and no-effect transitions.
-It is conceptually based on <a href='http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/spark/components/ViewNavigator.html' target='_blank'>ViewNavigator API</a> from mobile SDK of
-<a href='http://incubator.apache.org/flex/' target='_blank'>Apache Flex framework</a>. It provides developers means to manage stack of views that can be pushed, popped or replaced.
+<div>
+    <h3>What is BackStack?</h3>
+    <p>
+        BackStack is a JavaScript component/extension for <a href="http://documentcloud.github.com/backbone" target="_blank">Backbone.js</a> that allows you to create nice view
+        transitions in your HTML5 apps. By default it comes with an implementation of mobile-style slide transitions, fade
+        transitions, and no-effect transitions.
+    </p>
+    <p>
+        It is conceptually based on the <a href="http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/spark/components/ViewNavigator.html" target="_blank">ViewNavigator API</a> from the mobile SDK of the <a href="http://incubator.apache.org/flex/" target="_blank">Apache Flex framework</a>. It enables developers to manage a stack of views that can be pushed, popped, or replaced.
+    </p>
 
-### Why should I use it?
-Although you can use it for web development (as I did to create <a href='http://pwalczyszyn.github.com/backstack' target='_blank'>this</a> site) it is especially useful when building mobile apps with PhoneGap/Cordova framework.
-Of course if you are using frameworks like <a href='http://jquerymobile.com/' target='_blank'>jQuery Mobile</a>, <a href='http://www.sencha.com/products/touch/' target='_blank'>Sencha Touch</a>, <a href='http://www.jqtouch.com/' target='_blank'>jQTouch</a> or probably dozen of other mobile UI frameworks you don't need it.
+    <h3>Why should I use it?</h3>
+    <p>Although you can use it for web development (as I did to create <a href='http://pwalczyszyn.github.com/backstack/' target='_blank'>this</a> site) it is especially useful when building mobile apps with PhoneGap/Cordova framework.
+        Of course, if you are using one of the dozen or so available mobile UI frameworks like <a href="http://jquerymobile.com/" target="_blank">jQuery Mobile</a>,
+        <a href="http://www.sencha.com/products/touch/" target="_blank">Sencha Touch</a>, or <a href="http://www.jqtouch.com/" target="_blank">jQTouch</a> you don't need it.
+    </p>
 
-### Are there other alternatives?
+    <h3>Are there other alternatives?</h3>
+    <p>You can use the ViewNavigator implementation from the <a href="http://triceam.github.com/app-UI/" target="_blank">app-UI</a> framework built by fellow Adobe Evangelist
+        <a href="http://tricedesigns.com/" target="_blank">Andy Trice</a>. Alternatively, you can build the transitions yourself; it is not really hard! Or, use one of the frameworks mentioned above.
+    </p>
 
-You can use ViewNavigator implementation from <a href="http://triceam.github.com/app-UI/" target="_blank">app-UI</a> framework built by fellow Adobe Evangelist <a href="http://tricedesigns.com/" target="_blank">Andy Trice</a>. Of course you can build the transitions yourself, it is not really hard ;) or use already mentioned frameworks above.
-
-### How was it built?
-
-This may not be particularly interesting to everyone but to develop/package BackStack an <a href="https://github.com/jrburke/almond" target="_blank">almond</a> library was used. Almond is a replacement AMD loader for RequireJS. It is a smaller "shim" loader, providing the minimal AMD API footprint that includes loader plugin support.
+    <h3>How was it built?</h3>
+    <p>This may not be particularly interesting to everyone but I used the <a href="https://github.com/jrburke/almond" target="_blank">almond</a> library to develop/package BackStack. Almond is a replacement AMD loader for RequireJS. It is a smaller "shim" loader, providing a minimal AMD API footprint that includes loader plugin support.</p>
+</div>
 
 ### Where can I find more info about it?
 <a href='http://pwalczyszyn.github.com/backstack' target='_blank'>Here is a demo site</a> that is actually built with BackStack. Be aware of a disclaimer that I only tested it with WebKit based browsers as I mainly used it for mobile apps development. So if you are on IE this site many not work for you, sorry for that ;)
 
 You can also checkout a <a href='http://jsfiddle.net/pwalczyszyn/dwRQU' target='_blank'>simple example</a> that is available on jsFiddle.
-
 
 ### BackStack.StackNavigator class API
 <div>
