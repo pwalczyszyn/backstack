@@ -27,7 +27,7 @@
 ### Where can I find more info about it?
 <a href='http://pwalczyszyn.github.com/backstack' target='_blank'>Here is a demo site</a> that is actually built with BackStack. Be aware of a disclaimer that I only tested it with WebKit based browsers as I mainly used it for mobile apps development. So if you are on IE this site many not work for you, sorry for that ;)
 
-You can also checkout a <a href='http://jsfiddle.net/pwalczyszyn/dwRQU' target='_blank'>simple example</a> that is available on jsFiddle.
+You can also checkout this <a href='http://jsfiddle.net/pwalczyszyn/dwRQU' target='_blank'>simple example</a> that is available on jsFiddle.
 
 ### BackStack.StackNavigator class API
 <div>
