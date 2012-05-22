@@ -327,7 +327,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
             /**
              * Replaces view on top of the stack, with the one passed as a view param.
              *
-             * @param {Backbone.View} view View to be pushed on top of the stack instead of current one.
+             * @param {Backbone.View || Backbone.ViewClass} view View class or view instance to be pushed on top of the stack instead of current one.
              * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
              * @param {Effect} transition Transition effect to be played when replacing views.
              *
@@ -366,7 +366,7 @@ define(['effects/SlideEffect'], function (SlideEffect) {
             /**
              * Replaces all of the views on the stack, with the one passed as a view param.
              *
-             * @param {Backbone.View} view View to be pushed on top of the stack.
+             * @param {Backbone.View || Backbone.ViewClass} view View class or view instance to be pushed on top of the stack.
              * @param {Object} viewOptions Hash with options to be passed to the view, if view param is not an instance.
              * @param {Effect} transition Transition effect to be played when replacing views.
              *
