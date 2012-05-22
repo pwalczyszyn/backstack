@@ -18,18 +18,16 @@ You can also checkout a <a href='http://jsfiddle.net/pwalczyszyn/dwRQU' target='
 <div>
     <h3>Constructor</h3>
 
-    <p>
-        <h4>Parameters:</h4>
 
-        <ul>
-            <li><strong>options</strong> - Backbone view options hash.
-                <ul>
-                    <li><strong>options.popTransition</strong> - default transition effect object to be used during pop operations.</li>
-                    <li><strong>options.pushTransition</strong> - default transition effect object to be used during push operations.</li>
-                </ul>
-            </li>
-        </ul>
-    </p>
+    <ul>
+        <li><strong>options</strong> - Backbone view options hash.
+            <ul>
+                <li><strong>options.popTransition</strong> - default transition effect object to be used during pop operations.</li>
+                <li><strong>options.pushTransition</strong> - default transition effect object to be used during push operations.</li>
+            </ul>
+        </li>
+    </ul>
+
 
     <h3>Events</h3>
     <p>
