@@ -9,7 +9,7 @@ Although you can use it for web development (as I did to create [this](http://pw
 Of course if you are using frameworks like [jQuery Mobile](http://jquerymobile.com/), [Sencha Touch](http://www.sencha.com/products/touch/), [jQTouch](http://www.jqtouch.com/) or probably dozen of other mobile UI frameworks you don't need it.
 
 ### Where can I find more info about it?
-[Here is a demo site](http://pwalczyszyn.github.com/backstack) that is actually built with BackStack. Be aware of a disclaimer that I only tested it with WebKit based browsers as I mainly used it for mobile apps development. So if you are on IE this site many not work for you, sorry for that ;)
+<a href='http://pwalczyszyn.github.com/backstack' target='_blank'>Here is a demo site</a> that is actually built with BackStack. Be aware of a disclaimer that I only tested it with WebKit based browsers as I mainly used it for mobile apps development. So if you are on IE this site many not work for you, sorry for that ;)
 
 You can also checkout a [simple example](http://jsfiddle.net/pwalczyszyn/dwRQU) that is available on jsFiddle.
 
