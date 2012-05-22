@@ -4,9 +4,6 @@ body {
     font-family: "default-gothic";
 }
 
-p {
-}
-
 #tabletContainer {
     position: relative;
     width: 960px;
@@ -40,6 +37,10 @@ p {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+}
+
+a.start-demo, a.start-demo:visited {
+    color: #999;
 }
 
 #navBar {

@@ -11,7 +11,7 @@ var IntroView = Backbone.View.extend({
     id:'introView',
 
     events:{
-        'click button':'button_clickHandler'
+        'click a.start-demo':'button_clickHandler'
     },
 
     render:function () {
