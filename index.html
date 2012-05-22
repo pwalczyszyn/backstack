@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>BackStack demo page</title>
 
@@ -72,18 +72,21 @@
     </script>
 
     <script id="apiTemplate" type="text/html">
+        <h2>BackStack.StackNavigator class API's.</h2>
+
         <h3>Constructor</h3>
-        <p>
-            <h4>Parameters:</h4>
-            <ul>
-                <li><strong>options.popTransition</strong> - default transition effect object to be used during pop operations.</li>
-                <li><strong>options.pushTransition</strong> - default transition effect object to be used during push operations.</li>
-            </ul>
-        </p>
+        <ul>
+            <li><strong>options</strong> - Backbone view options hash.
+                <ul>
+                    <li><strong>options.popTransition</strong> - default transition effect object to be used during pop operations.</li>
+                    <li><strong>options.pushTransition</strong> - default transition effect object to be used during push operations.</li>
+                </ul>
+            </li>
+        </ul>
 
         <h3>Events</h3>
         <p>
-            BackStack eventing model is based on Backbone's events implementation.
+            BackStack.StackNavigator eventing model is based on Backbone's events implementation.
             <ul>
                 <li><strong>StackNavigator#viewChanging</strong> - It's triggered just before view on the stack is changed. This event is cancelable and the view change can be stopped using <code>event.preventDefault()</code> function.
                     <h4>Event object properties:</h4>
@@ -116,7 +119,62 @@
                 </li>
             </ul>
         </p>
+
+        <h3>Fields</h3>
+        <ul>
+            <li><strong>StackNavigator.viewsStack</strong> - An array with all the view refs on the stack.</li>
+            <li><strong>StackNavigator.activeView</strong> - View on top of the stack.</li>
+            <li><strong>StackNavigator.defaultPushTransition</strong> - Default push transition effect.</li>
+            <li><strong>StackNavigator.defaultPopTransition</strong> - Default pop transition effect.</li>
+        </ul>
+
         <h3>Functions</h3>
+        <ul>
+            <li><strong>StackNavigator.popAll(transition)</strong> - Pops all views from a stack and leaves empty stack.
+                <h4>Parameters:</h4>
+                <ul>
+                    <li>{Effect} <strong>transition</strong> Transition effect to be played when popping views.</li>
+                </ul>
+            </li>
+
+            <li><strong>StackNavigator.popView(transition)</strong> - Pops an active view from a stack and displays one below.
+                <h4>Parameters:</h4>
+                <ul>
+                    <li>{Effect} <strong>transition</strong> Transition effect to be played when popping new view.</li>
+                </ul>
+            </li>
+
+            <li><strong>StackNavigator.pushView(view, viewOptions, transition)</strong> - Pushes new view to the stack.
+                <h4>Parameters:</h4>
+                <ul>
+                    <li>{Backbone.View || Backbone.ViewClass} <strong>view</strong> View class or view instance to be pushed on top of the stack.</li>
+                    <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
+                    <li>{Effect} <strong>transition</strong> Transition effect to be played when pushing new view.</li>
+                </ul>
+                <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
+            </li>
+
+            <li><strong>StackNavigator.replaceAll(view, viewOptions, transition)</strong> - Replaces all of the views on the stack, with the one passed as a view param.
+                <h4>Parameters:</h4>
+                <ul>
+                    <li>{Backbone.View || Backbone.ViewClass} <strong>view</strong> View class or view instance to be pushed on top of the stack.</li>
+                    <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
+                    <li>{Effect} <strong>transition</strong> Transition effect to be played when replacing views.</li>
+                </ul>
+                <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
+            </li>
+
+            <li><strong>StackNavigator.replaceView(view, viewOptions, transition)</strong> - Replaces view on top of the stack, with the one passed as a view param.
+                <h4>Parameters:</h4>
+                <ul>
+                    <li>{Backbone.View || Backbone.ViewClass} <strong>view</strong> View class or view instance to be pushed on top of the stack instead of current one.</li>
+                    <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
+                    <li>{Effect} <strong>transition</strong> Transition effect to be played when replacing view.</li>
+                </ul>
+
+                <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
+            </li>
+        </ul>
     </script>
 
     <script id="exampleTamplate" type="text/html">
@@ -127,15 +185,14 @@
 
 <body onload="onBodyLoad()">
 
-<a href="https://github.com/pwalczyszyn/backstack"><img style="position: absolute; top: 0; right: 0; border: 0;"
-                                                        src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-                                                        alt="Fork me on GitHub"></a>
+    <a href="https://github.com/pwalczyszyn/backstack">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" />
+    </a>
 
-<div id="tabletContainer">
-    <img src="images/border.png"/>
-
-    <div id="container"/>
-</div>
+    <div id="tabletContainer">
+        <img src="images/border.png"/>
+        <div id="container"/>
+    </div>
 
 </body>
 

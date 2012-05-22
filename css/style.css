@@ -1,10 +1,10 @@
 body {
     background-image: url("../images/background.jpg");
     background-repeat: repeat;
+    font-family: "default-gothic";
 }
 
 p {
-    font-family: "default-gothic";
 }
 
 #tabletContainer {
