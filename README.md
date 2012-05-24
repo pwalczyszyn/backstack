@@ -29,6 +29,8 @@
 
 You can also checkout this <a href='http://jsfiddle.net/pwalczyszyn/dwRQU' target='_blank'>simple example</a> that is available on jsFiddle.
 
+Watch an intro on YouTube with step-by-step instructions how to get started: http://www.youtube.com/watch?v=sm5DI-iYark
+
 ### BackStack.StackNavigator class API
 <div>
     <h3>Constructor</h3>
