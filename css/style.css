@@ -138,3 +138,7 @@ button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
 #apiView, #aboutView {
     overflow-y: scroll !important;
 }
+
+#aboutView > :last-child, #apiView > :last-child {
+    padding-bottom: 30px;
+}
