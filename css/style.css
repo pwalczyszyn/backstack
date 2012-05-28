@@ -1,12 +1,11 @@
 body {
     background-image: url("../images/background.jpg");
     background-repeat: repeat;
-    font-family: "default-gothic";
-    color: #fff;
+    font-family: "ratio",sans-serif;
 }
 
 a, a:visited, a:active, a:hover {
-    color: #fff;
+    color: #ffff00;
 }
 
 #tabletContainer {
