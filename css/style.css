@@ -2,6 +2,7 @@ body {
     background-image: url("../images/background.jpg");
     background-repeat: repeat;
     font-family: "default-gothic";
+    color: #fff;
 }
 
 #tabletContainer {
@@ -19,7 +20,7 @@ body {
     height: 618px;
     left: 68px;
     top: 67px;
-    background-color: #f9f9f9;
+    background-color: #000;
 }
 
 #container > div {
@@ -30,16 +31,13 @@ body {
 }
 
 #introView {
-    display: table;
-}
-
-#introView > div {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
+    background: url("../images/backstack-splash.jpg") no-repeat;
 }
 
 a.start-demo, a.start-demo:visited {
+    position: absolute;
+    right: 80px;
+    bottom: 80px;
     color: #999;
 }
 
@@ -56,6 +54,11 @@ a.start-demo, a.start-demo:visited {
     top: 45px;
     bottom: 0;
     width: 100%;
+}
+
+#mainView {
+    background: url("../images/backstack-bg.jpg") no-repeat;
+
 }
 
 button.nav-bar-btn {
