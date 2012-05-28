@@ -7,11 +7,12 @@ body {
 p {
     color: #002537;
     font-size: 18px;
-    line-height: 1.2em;
+    line-height: 1.4em;
     font-weight: 400;
 }
 
 h1, h2, h3, h4, h5 {
+    margin: 0;
     color: #0071b4;
     font-size: 26px;
     font-weight: 300;
@@ -112,7 +113,7 @@ button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
 
 #aboutView > *, #apiView > * {
     margin-left: 3em;
-    margin-right: 11em;
+    margin-right: 10em;
 }
 
 #ifJsfiddle {
