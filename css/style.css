@@ -18,6 +18,13 @@ h1, h2, h3, h4, h5 {
     font-weight: 300;
 }
 
+h2 {
+    color: white;
+    font-size: 31px;
+    margin-top: 50px;
+    margin-left: 30px;
+}
+
 h3 {
     color: #fff;
     margin: 40px 0 25px 0;
@@ -25,7 +32,7 @@ h3 {
 
 h4 {
     text-transform: uppercase;
-    font-size: 18px;
+    font-size: 16px;
     letter-spacing: 0.1em;
 }
 
@@ -37,6 +44,10 @@ a {
 a:hover {
     color: #fff;
     text-decoration: underline;
+}
+
+ul {
+    padding-left: 25px;
 }
 
 #tabletContainer {
