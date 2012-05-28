@@ -140,5 +140,5 @@ button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
 }
 
 #aboutView > :last-child, #apiView > :last-child {
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
