@@ -20,12 +20,13 @@ h1, h2, h3, h4, h5 {
 
 h3 {
     color: #fff;
+    margin: 40px 0 25px 0;
 }
 
 h4 {
     text-transform: uppercase;
-    font-size: 20px;
-    letter-spacing: 0.2em;
+    font-size: 18px;
+    letter-spacing: 0.1em;
 }
 
 a {
