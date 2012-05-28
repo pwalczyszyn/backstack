@@ -1,7 +1,7 @@
 body {
     background-image: url("../images/background.jpg");
     background-repeat: repeat;
-    font-family: "ratio",sans-serif;
+    font-family: "ratio", sans-serif;
 }
 
 p {
@@ -80,7 +80,6 @@ a.start-demo, a.start-demo:visited {
 
 #mainView {
     background: url("../images/backstack-bg.jpg") no-repeat;
-
 }
 
 button.nav-bar-btn {
@@ -114,6 +113,6 @@ button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
     height: 573px
 }
 
-#apiView {
+#apiView, #aboutView {
     overflow-y: scroll !important;
 }
