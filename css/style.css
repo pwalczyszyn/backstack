@@ -5,6 +5,10 @@ body {
     color: #fff;
 }
 
+a, a:visited, a:active, a:hover {
+    color: #fff;
+}
+
 #tabletContainer {
     position: relative;
     width: 960px;
