@@ -23,8 +23,8 @@ h3 {
 
 h4 {
     text-transform: uppercase;
-    font-size: 22px;
-    letter-spacing: 0.4em;
+    font-size: 20px;
+    letter-spacing: 0.2em;
 }
 
 a {
@@ -111,8 +111,8 @@ button.nav-bar-btn:hover, button.nav-bar-btn:active, button.nav-bar-btn.down {
 }
 
 #aboutView > *, #apiView > * {
-    margin-left: 1em;
-    margin-right: 1em;
+    margin-left: 3em;
+    margin-right: 11em;
 }
 
 #ifJsfiddle {
