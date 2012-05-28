@@ -21,12 +21,20 @@ h3 {
     color: #fff;
 }
 
+h4 {
+    text-transform: uppercase;
+    font-size: 22px;
+    letter-spacing: 0.4em;
+}
+
 a {
     color: #dbf3ff;
+    text-decoration: none;
 }
 
 a:hover {
     color: #fff;
+    text-decoration: underline;
 }
 
 #tabletContainer {
