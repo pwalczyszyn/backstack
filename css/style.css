@@ -5,14 +5,13 @@ body {
 }
 
 p {
-    font-family: "ratio", sans;
     color: #002537;
     font-size: 18px;
+    line-height: 1.2em;
     font-weight: 400;
 }
 
-h1-h3 {
-    font-family: "ratio", sans;
+h1, h2, h3, h4, h5 {
     color: #0071b4;
     font-size: 26px;
     font-weight: 300;
@@ -20,7 +19,6 @@ h1-h3 {
 
 a {
     color: #dbf3ff;
-    font-family: "ratio", sans;
 }
 
 a:hover {
