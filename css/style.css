@@ -90,7 +90,8 @@ a.start-demo, a.start-demo:visited {
     top: 0;
     width: 100%;
     height: 45px;
-    background: #363636 url(../images/top-bar-pattern.png) repeat left top;
+    background: #053B55 url(../images/top-bar-pattern.png) repeat left top;
+    box-shadow: inset 0 -5px 7px rgba(0, 0, 0, 0.25);
 }
 
 #subviewsContainer {
@@ -106,7 +107,8 @@ a.start-demo, a.start-demo:visited {
 
 button.nav-bar-btn {
     font-weight: bold;
-    color: #aaaaaa;
+    color: #6bc8ff;
+    text-transform: uppercase;
     font-size: 0.9em;
     letter-spacing: 0.08em;
     background: transparent url(../images/top-bar-separator.png) repeat-y right top !important;
