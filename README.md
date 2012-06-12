@@ -113,7 +113,6 @@ Watch an intro on YouTube with step-by-step instructions how to get started: htt
                 <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
                 <li>{Effect} <strong>transition</strong> Transition effect to be played when pushing new view.</li>
             </ul>
-            <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
         </li>
 
         <li><strong>StackNavigator.replaceAll(view, viewOptions, transition)</strong> - Replaces all of the views on the stack, with the one passed as a view param.
@@ -123,7 +122,6 @@ Watch an intro on YouTube with step-by-step instructions how to get started: htt
                 <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
                 <li>{Effect} <strong>transition</strong> Transition effect to be played when replacing views.</li>
             </ul>
-            <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
         </li>
 
         <li><strong>StackNavigator.replaceView(view, viewOptions, transition)</strong> - Replaces view on top of the stack, with the one passed as a view param.
@@ -133,8 +131,6 @@ Watch an intro on YouTube with step-by-step instructions how to get started: htt
                 <li>{Object} <strong>viewOptions</strong> Options to be passed if view is constructed by StackNavigator.</li>
                 <li>{Effect} <strong>transition</strong> Transition effect to be played when replacing view.</li>
             </ul>
-
-            <p><strong>Returns:</strong> {Backbone.View} Instance of a pushed view.</p>
         </li>
     </ul>
 </div>
