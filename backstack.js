@@ -16,7 +16,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-// BackStack version 1.1.0
+// BackStack version 1.1.1
 
 (function (root, factory) {
     // Set up BackStack appropriately for the environment.
