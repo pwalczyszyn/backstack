@@ -1,9 +1,9 @@
 ({
     baseUrl:"../src",
     paths:{
-        "almond":"../build/almond-0.0.3"
+        "almond":"../build/almond"
     },
-    include:["almond", "BackStack"],
+    include:["almond", "StackNavigator", "effects/Effect", "effects/FadeEffect", "effects/NoEffect", "effects/SlideEffect"],
     preserveLicenseComments:true,
     out:"backstack-built.js",
     wrap:{
