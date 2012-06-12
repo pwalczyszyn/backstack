@@ -850,8 +850,8 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
         this.actionsQueue.splice(0, 1);
         if (this.actionsQueue.length > 0) {
             var action = this.actionsQueue[0],
-                args = Array.prototype.slice.call(action.arguments);
-            switch (action.function) {
+                args = Array.prototype.slice.call(action.args);
+            switch (action.fn) {
                 case 'pushView':
                     pushView.apply(this, args);
                     break;
@@ -940,7 +940,7 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
              */
             pushView:function (view, viewOptions, transition) {
                 // Pushing current action to the queue
-                this.actionsQueue.push({function:'pushView', arguments:arguments});
+                this.actionsQueue.push({fn:'pushView', args:arguments});
 
                 if (this.actionsQueue.length == 1) pushView.call(this, view, viewOptions, transition);
             },
@@ -952,7 +952,7 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
              */
             popView:function (transition) {
                 // Pushing current action to the queue
-                this.actionsQueue.push({function:'popView', arguments:arguments});
+                this.actionsQueue.push({fn:'popView', args:arguments});
 
                 if (this.actionsQueue.length == 1) popView.call(this, transition);
             },
@@ -964,7 +964,7 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
              */
             popAll:function (transition) {
                 // Pushing current action to the queue
-                this.actionsQueue.push({function:'popAll', arguments:arguments});
+                this.actionsQueue.push({fn:'popAll', args:arguments});
 
                 if (this.actionsQueue.length == 1) popAll.call(this, transition);
             },
@@ -978,7 +978,7 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
              */
             replaceView:function (view, viewOptions, transition) {
                 // Pushing current action to the queue
-                this.actionsQueue.push({function:'replaceView', arguments:arguments});
+                this.actionsQueue.push({fn:'replaceView', args:arguments});
 
                 if (this.actionsQueue.length == 1) replaceView.call(this, view, viewOptions, transition);
             },
@@ -992,7 +992,7 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
              */
             replaceAll:function (view, viewOptions, transition) {
                 // Pushing current action to the queue
-                this.actionsQueue.push({function:'replaceAll', arguments:arguments});
+                this.actionsQueue.push({fn:'replaceAll', args:arguments});
 
                 if (this.actionsQueue.length == 1) replaceAll.call(this, view, viewOptions, transition);
             }
