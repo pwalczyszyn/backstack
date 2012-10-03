@@ -16,7 +16,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-// BackStack version 1.1.1
+// BackStack version 1.1.2
 
 (function (root, factory) {
     // Set up BackStack appropriately for the environment.
@@ -631,18 +631,20 @@ define('StackNavigator',['effects/SlideEffect'], function (SlideEffect) {
                 var remove = replaceHowMany > 0 ? this.viewsStack.splice(this.viewsStack.length - replaceHowMany, replaceHowMany)
                     : (fromViewRef ? [fromViewRef] : null);
 
-                _.each(remove, function (ref) {
+                if (remove != null) {
+                    _.each(remove, function (ref) {
 
-                    // Triggering viewDeactivate event
-                    createEvent('viewDeactivate', {target:ref.instance}).trigger(ref.instance);
+                        // Triggering viewDeactivate event
+                        createEvent('viewDeactivate', {target:ref.instance}).trigger(ref.instance);
 
-                    if (ref.instance.destructionPolicy == 'never') { // Detaching if destructionPolicy == 'never'
-                        ref.instance.$el.detach();
-                    } else { // Removing if destructionPolicy == 'auto'
-                        ref.instance.remove();
-                        ref.instance = null;
-                    }
-                }, this);
+                        if (ref.instance.destructionPolicy == 'never') { // Detaching if destructionPolicy == 'never'
+                            ref.instance.$el.detach();
+                        } else { // Removing if destructionPolicy == 'auto'
+                            ref.instance.remove();
+                            ref.instance = null;
+                        }
+                    }, this);
+                }
 
                 // Adding view to the stack internal array
                 this.viewsStack.push(toViewRef);
