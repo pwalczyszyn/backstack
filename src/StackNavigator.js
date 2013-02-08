@@ -381,6 +381,8 @@ define(['effects/SlideEffect'], function (SlideEffect) {
              * @constructs
              * */
             initialize:function (options) {
+                options || (options = {});
+                
                 // Setting default styles
                 this.$el.css({overflow:'hidden'});
 
