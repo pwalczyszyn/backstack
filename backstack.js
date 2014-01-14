@@ -22,7 +22,7 @@
     // Set up BackStack appropriately for the environment.
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['jquery', 'underscore', 'Backbone'], factory);
+        define(['jquery', 'underscore', 'backbone'], factory);
     } else {
         // Browser globals
         root.BackStack = factory((root.jQuery || root.Zepto || root.ender), root._, root.Backbone);
