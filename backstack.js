@@ -504,7 +504,9 @@ define('effects/SlideEffect',['effects/Effect'], function (Effect) {
                 if (activeTransitions > 0) {
                     activeTransitions = -1;
 
-                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+                    if (typeof console !== "undefined") {
+                        console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+                    }
 
                     if ($toView) {
                         $toView.off(that.transitionEndEvent, transitionEndHandler);
@@ -1071,7 +1073,9 @@ define('effects/FadeEffect',['effects/Effect'], function (Effect) {
                 if (activeTransitions > 0) {
                     activeTransitions = -1;
 
-                    console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+                    if (typeof console !== "undefined") {
+                        console.log('Warning ' + that.transitionEndEvent + ' didn\'t trigger in expected time!');
+                    }
 
                     if ($toView) {
                         $toView.off(that.transitionEndEvent, transitionEndHandler);
